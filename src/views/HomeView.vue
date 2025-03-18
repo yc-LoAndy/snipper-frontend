@@ -4,7 +4,6 @@
       <div class="col-md-4">
         <div class="card mt-5 black-background">
           <div class="card-body">
-            <h5 class="card-title text-center mb-4">Login</h5>
             <form @submit.prevent="handleSubmit">
               <div class="mb-3">
                 <label for="email" class="form-label">Email address</label>
@@ -29,7 +28,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import api from '../utils/errorHandler';
+import { api } from '../globalVar.ts';
 
 const email = ref('');
 const password = ref('');
@@ -42,7 +41,7 @@ const handleSubmit = async () => {
     localStorage.setItem('accessToken', accessToken);
 
     // Redirect to another page after successful login
-    router.push('/dashboard'); // Replace '/dashboard' with your desired route
+    router.push('/editor'); // Replace '/dashboard' with your desired route
   } catch (error) {
     console.error('Login failed:', error);
     // Handle login error, e.g., display an error message to the user
@@ -51,6 +50,22 @@ const handleSubmit = async () => {
 </script>
 
 <style scoped>
+a {
+  color: #7fd1d1;
+}
+
+button {
+  color: #000;
+  background-color: #6e9494;
+  border: #6e9494;
+}
+
+button:hover {
+  color: #000;
+  background-color: #7fd1d1;
+  border: #7fd1d1;
+}
+
 .black-background {
   background-color: #0f0e0e;
   color: #d9e2eb;

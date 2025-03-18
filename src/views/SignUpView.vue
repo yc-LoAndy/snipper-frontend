@@ -4,7 +4,6 @@
       <div class="col-md-4">
         <div class="card mt-5 black-background">
           <div class="card-body">
-            <h5 class="card-title text-center mb-4">Sign Up</h5>
             <form @submit.prevent="handleSubmit">
               <div class="mb-3">
                 <label for="username" class="form-label">Username</label>
@@ -20,7 +19,7 @@
               </div>
               <button type="submit" class="btn btn-success w-50 mt-3">Sign Up</button>
             </form>
-            <div class="text-center mt-3">
+            <div class="text-center mt-5">
               <a href="/">Already have an account? Login</a>
             </div>
           </div>
@@ -33,7 +32,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import api from '../utils/errorHandler';
+import { api } from '../globalVar.ts';
 
 const username = ref('');
 const email = ref('');
@@ -42,13 +41,13 @@ const router = useRouter();
 
 const handleSubmit = async () => {
   try {
-    const response = await api.post('/user', {
+    await api.post('/user', {
       userName: username.value,
       userEmail: email.value,
       password: password.value
     });
     // Handle successful signup, e.g., redirect to login or dashboard
-    console.log("Signup successful:", response.data);
+    // console.log("Signup successful:", response.data);
     router.push('/'); // Redirect to login page after successful signup
   } catch (error) {
     console.error('Signup failed:', error);
@@ -58,6 +57,11 @@ const handleSubmit = async () => {
 </script>
 
 <style scoped>
+a {
+  margin-top: 50px;
+  color: #7fd1d1;
+}
+
 .black-background {
   background-color: #0f0e0e;
   color: #d9e2eb;
@@ -66,5 +70,17 @@ const handleSubmit = async () => {
 input {
   background-color: #babbbd;
   height: 5%;
+}
+
+button {
+  color: #000;
+  background-color: #6e9494;
+  border: #6e9494;
+}
+
+button:hover {
+  color: #000;
+  background-color: #7fd1d1;
+  border: #7fd1d1;
 }
 </style>

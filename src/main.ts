@@ -1,11 +1,10 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { createApp } from 'vue';
-import api from './utils/errorHandler';
 
+import { api } from './globalVar';
 import App from './App.vue';
 import router from './router';
 import './style/style.css';
-
 
 // Axios interceptor to add the token to the Authorization header
 api.interceptors.request.use(

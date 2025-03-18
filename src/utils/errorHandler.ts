@@ -1,11 +1,8 @@
-import axios from 'axios';
 import { ref } from 'vue';
+import { api } from '../globalVar';
 
 export const apiError = ref<string | null>(null);
 
-const api = axios.create({
-    baseURL: '/api',
-});
 
 api.interceptors.response.use(
     (response) => response, // Pass successful responses
