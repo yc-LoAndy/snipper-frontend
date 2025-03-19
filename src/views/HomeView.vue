@@ -28,7 +28,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { api } from '../globalVar.ts';
+import api from '../utils/api';
+import type { AxiosAuthRefreshRequestConfig } from 'axios-auth-refresh';
 
 const email = ref('');
 const password = ref('');
@@ -36,7 +37,11 @@ const router = useRouter();
 
 const handleSubmit = async () => {
   try {
-    const response = await api.post('/login', { userEmail: email.value, userPassword: password.value });
+    const response = await api.post(
+      '/login',
+      { userEmail: email.value, userPassword: password.value },
+      { skipAuthRefresh: true } as AxiosAuthRefreshRequestConfig
+    );
     const accessToken = response.data.accessToken; // Adjust this to match your API response
     localStorage.setItem('accessToken', accessToken);
 

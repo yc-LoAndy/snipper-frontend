@@ -13,7 +13,7 @@
     </div>
 
     <div v-else class="language-buttons">
-      <button v-for="language in languages" :key="language" @click="selectLanguage(language)"
+      <button v-for="language in languages" :key="language.language" @click="selectLanguage(language)"
         class="btn btn-outline-secondary rounded-pill me-2 mb-2"
         :class="{ 'active': selectedLanguage?.language === language.language }">
         <img v-if="language.imagePath" :src="language.imagePath" class="language-icon me-2"
@@ -26,15 +26,17 @@
 
 <script lang="ts">
 import { defineComponent, ref, onMounted } from 'vue'
-import { api } from '../globalVar.ts'
+import api from '../utils/api'
+
+type languageReturnType = { language: string, imagePath: string }
 
 export default defineComponent({
   name: 'LanguageSelector',
   emits: ['language-selected'],
 
   setup(_, { emit }) {
-    const languages = ref<string[]>([]);
-    const selectedLanguage = ref<string | null>(null);
+    const languages = ref<languageReturnType[]>([]);
+    const selectedLanguage = ref<languageReturnType | null>(null);
     const loading = ref<boolean>(true);
     const error = ref<string | null>(null);
 
@@ -51,7 +53,7 @@ export default defineComponent({
       }
     };
 
-    const selectLanguage = (language: string) => {
+    const selectLanguage = (language: languageReturnType) => {
       selectedLanguage.value = language;
       emit('language-selected', language);
     };

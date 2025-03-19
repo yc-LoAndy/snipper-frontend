@@ -7,7 +7,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { apiError } from '../utils/errorHandler';
+import { apiError } from '../utils/api';
 
 const error = computed(() => apiError.value);
 

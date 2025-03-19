@@ -32,7 +32,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { api } from '../globalVar.ts';
+import api from '../utils/api';
 
 const username = ref('');
 const email = ref('');
