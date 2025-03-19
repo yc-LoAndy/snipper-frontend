@@ -1,6 +1,10 @@
 <template>
   <header class="header">
-    <h1 class="app-title lekton-bold">Snipper</h1>
+    <h1 class="app-title lekton-bold">
+      <router-link to="/">
+        Snipper
+      </router-link>
+    </h1>
     <p class="description courier-prime-regular">Code snippet manager</p>
   </header>
 </template>
@@ -18,7 +22,12 @@
   text-align: center;
 }
 
+a {
+  color: inherit !important;
+}
+
 .app-title {
+  color: aliceblue;
   margin: 0;
   font-size: 50px;
   letter-spacing: 1px;
