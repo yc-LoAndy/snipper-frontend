@@ -46,12 +46,9 @@ const handleSubmit = async () => {
       userEmail: email.value,
       password: password.value
     });
-    // Handle successful signup, e.g., redirect to login or dashboard
-    // console.log("Signup successful:", response.data);
-    router.push('/'); // Redirect to login page after successful signup
+    router.push('/');
   } catch (error) {
     console.error('Signup failed:', error);
-    // Handle signup errors, e.g., display error messages to the user
   }
 };
 </script>

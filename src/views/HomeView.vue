@@ -40,16 +40,16 @@ const handleSubmit = async () => {
     const response = await api.post(
       '/login',
       { userEmail: email.value, userPassword: password.value },
+      // do not try to refresh tokens when login with email and pwd 
       { skipAuthRefresh: true } as AxiosAuthRefreshRequestConfig
     );
-    const accessToken = response.data.accessToken; // Adjust this to match your API response
+    const accessToken = response.data.accessToken;
     localStorage.setItem('accessToken', accessToken);
 
     // Redirect to another page after successful login
-    router.push('/editor'); // Replace '/dashboard' with your desired route
+    router.push('/editor');
   } catch (error) {
     console.error('Login failed:', error);
-    // Handle login error, e.g., display an error message to the user
   }
 };
 </script>

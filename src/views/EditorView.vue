@@ -77,7 +77,7 @@ export default defineComponent({
       handleImageError
     };
   }
-})
+});
 </script>
 
 <style scoped>
