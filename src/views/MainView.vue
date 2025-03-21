@@ -13,7 +13,7 @@
     <div v-else class="top-container">
       <div class="container">
         <TreeView :userDetails="userDetails" />
-        <EditorView @confirmEdit="confirmEdit" />
+        <EditorView />
       </div>
     </div>
   </div>
@@ -23,7 +23,8 @@
 import api from '../utils/api';
 import TreeView from './TreeView.vue';
 import EditorView from './EditorView.vue';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
+import { eventBus } from '../utils/eventBus';
 
 type folderStructureType = {
   id: number,
@@ -59,15 +60,19 @@ const fetchUserDetail = async () => {
   }
 };
 
-
-const confirmEdit = async () => {
+const refreshData = async () => {
   await fetchUserDetail();
 };
 
 onMounted(async () => {
+  eventBus.on('refreshData', refreshData);
   loading.value = true;
   await fetchUserDetail();
   loading.value = false;
+});
+
+onUnmounted(() => {
+  eventBus.off('refreshData', refreshData);
 });
 </script>
 

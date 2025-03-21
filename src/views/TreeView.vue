@@ -14,7 +14,7 @@
 
 <script setup lang="ts">
 import type { TreeNode } from 'primevue/treenode';
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { PrimeIcons } from '@primevue/core/api';
 import { eventBus } from '../utils/eventBus';
 
@@ -49,7 +49,7 @@ const getTreeNodes = computed<TreeNode[]>(() => {
     return nodes;
   nodes.push(...(rootFolders.map<TreeNode>(
     (f) => ({
-      key: String(f.id),
+      key: 'folder-' + String(f.id),
       label: f.name,
       children: [],
       icon: PrimeIcons.FOLDER,
@@ -100,6 +100,15 @@ const onNodeSelect = (node: TreeNode) => {
   eventBus.emit('currentNodeId', node.key);
   eventBus.emit('editorContent', node.data);
 };
+
+const onSetSelectedKey = (key: string) => { selectedKey.value = { [key]: true }; console.log(selectedKey.value); };
+
+onMounted(() => {
+  eventBus.on('setSelectedKey', onSetSelectedKey);
+});
+onUnmounted(() => {
+  eventBus.off('setSelectedKey', onSetSelectedKey);
+});
 
 </script>
 

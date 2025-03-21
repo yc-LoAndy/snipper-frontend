@@ -1,4 +1,5 @@
 <template>
+  <ConfirmDialog ref="confirmDialogRef" />
   <ErrorDialog ref="errorDialogRef" />
   <div class="content-container">
     <div class="file-path-container">
@@ -7,10 +8,12 @@
         :style="pathInputStyle" ref="filePathInputRef" @keydown.enter="saveEdit" />
 
       <div v-if="!isEditing">
-        <ButtonTag rounded class="create-files-btn" severity="secondary" variant="text" icon="pi pi-plus" label="Create"
+        <ButtonTag rounded class="toolbar-btns" severity="primary" variant="text" icon="pi pi-plus" label="Create"
           @click="startCreatingFile" />
-        <ButtonTag rounded class="create-files-btn" severity="secondary" variant="text" icon="pi pi-file-edit"
-          label="Modify" :disabled="modifyBtnDisableSwitch" @click="startUpdatingFile" />
+        <ButtonTag rounded class="toolbar-btns" severity="info" variant="text" icon="pi pi-file-edit" label="Modify"
+          :disabled="modifyBtnDisableSwitch" @click="startUpdatingFile" />
+        <ButtonTag rounded class="toolbar-btns" severity="danger" variant="text" icon="pi pi-file-edit" label="Delete"
+          :disabled="deleteBtnDisableSwitch" @click="onDelete" />
       </div>
       <div v-else class="edit-actions">
         <ButtonTag icon="pi pi-check" severity="secondary" rounded size="small" @click="saveEdit" />
@@ -27,10 +30,10 @@
 <script setup lang="ts">
 import api from '../utils/api';
 import { ref, computed, nextTick, onMounted, onUnmounted } from 'vue';
-import { strCount } from '../utils/util';
 import { useToast } from 'primevue/usetoast';
 import { eventBus } from '../utils/eventBus';
-import ErrorDialog from '../components/ErrorDialog .vue';
+import ErrorDialog from '../components/ErrorDialog.vue';
+import ConfirmDialog from '../components/ConfirmDialog.vue';
 
 const toast = useToast();
 // flags
@@ -47,9 +50,7 @@ const prevEditorContent = ref<string>('');
 const editorRef = ref();
 const filePathInputRef = ref();
 const errorDialogRef = ref<InstanceType<typeof ErrorDialog> | null>(null);
-// emits
-const emit = defineEmits(['confirmEdit']);
-
+const confirmDialogRef = ref<InstanceType<typeof ConfirmDialog> | null>(null);
 
 // obvious style when entering editing
 const pathInputStyle = computed(() => isEditing.value
@@ -77,7 +78,12 @@ const editorBorderStyle = computed(() => isEditing.value
 );
 
 // disable modify button when folder is chosen
-const modifyBtnDisableSwitch = computed(() => currentNodeId.value.startsWith('folder') ? true : false);
+const modifyBtnDisableSwitch = computed(
+  () => currentNodeId.value.startsWith('folder') || !currentFilePath.value ? true : false
+);
+const deleteBtnDisableSwitch = computed(
+  () => !currentNodeId.value ? true : false
+);
 
 // after pushing create button
 const startCreatingFile = () => {
@@ -87,14 +93,12 @@ const startCreatingFile = () => {
   isCreatingNewFile.value = true;
   filePathInputRef.value.$el.placeholder = '';
 
-  if (currentFilePath.value) {
-    if (strCount(currentFilePath.value, '/') !== 1) {
-      const indexOfLastSlash = currentFilePath.value.lastIndexOf('/');
-      currentFilePath.value = currentFilePath.value.substring(0, indexOfLastSlash + 1);
-    }
-    else {
-      currentFilePath.value += '/';
-    }
+  if (currentNodeId.value.startsWith('snippet')) {
+    const indexOfLastSlash = currentFilePath.value.lastIndexOf('/');
+    currentFilePath.value = currentFilePath.value.substring(0, indexOfLastSlash + 1);
+  }
+  else {
+    currentFilePath.value += '/';
   }
 
   nextTick(() => editorRef.value.$el.focus());
@@ -118,23 +122,25 @@ const cancelEdit = () => {
 // confim editing
 const saveEdit = async () => {
   if (!currentFilePath.value || currentFilePath.value.endsWith('/')) {
-    console.log(errorDialogRef.value === null);
     errorDialogRef.value?.showError('Invalid path', 'Please provide a correct path.');
   }
   else {
+    let newNodeKey = currentNodeId.value;
     if (isCreatingNewFile.value) {
       isCreatingNewFile.value = false;
       const response = await api.post('/snippet', {
         filePath: currentFilePath.value,
         content: editorContent.value ?? ''
       }, { withCredentials: true });
-      if (response.status === 201)
+      if (response.status === 201) {
         toast.add({
           severity: 'success',
           summary: 'Success',
           detail: 'Snippet created',
           life: 5000
         });
+        newNodeKey = 'snippet-' + response.data.snippetId;
+      }
     }
     else if (isUpdatingFile.value) {
       isUpdatingFile.value = false;
@@ -151,8 +157,31 @@ const saveEdit = async () => {
         });
       }
     }
+    eventBus.emit('refreshData', true);
+    eventBus.emit('setSelectedKey', newNodeKey);
   }
-  emit('confirmEdit');
+};
+
+const onDelete = async () => {
+  if (!confirmDialogRef.value || !currentNodeId.value) return;
+
+  const obj = currentNodeId.value.startsWith('folder') ? 'folder' : 'snippet';
+  const userConfirmed = await confirmDialogRef.value.confirm(
+    `Delete ${obj}`,
+    `Are you sure you want to delete this ${obj}?${obj === 'folder' ? ' All contents will be deleted.' : ''}`
+  );
+  if (userConfirmed) {
+    await api.delete(
+      `/${obj}/${currentNodeId.value.replace(`${obj}-`, '')}`, { withCredentials: true }
+    );
+    toast.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: `${obj} deleted.`,
+      life: 5000
+    });
+    eventBus.emit('refreshData', true);
+  }
 };
 
 const updateCurrentFilePath = (p: string) => { currentFilePath.value = p; prevFilePath.value = p; };
@@ -201,7 +230,7 @@ TextArea {
   padding-right: 5px;
 }
 
-.create-files-btn {
+.toolbar-btns {
   font-size: 14px;
 }
 
