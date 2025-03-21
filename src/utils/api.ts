@@ -41,9 +41,6 @@ api.interceptors.response.use(
 			const requestId = error.response.headers['x-request-id'] ?? 'Unknown';
 			const errMessage = error.response.data.message || 'An error occurred';
 			apiError.value = `Error ${status}: ${errMessage} (Request ID: ${requestId})}`;
-
-			// clear error after 5 seconds
-			setTimeout(() => { apiError.value = null; }, 5000);
 		} else {
 			apiError.value = 'Network error';
 		}

@@ -1,6 +1,6 @@
 <template>
   <header class="header">
-    <h1 class="app-title lekton-bold">
+    <h1 class="app-title">
       <router-link to="/">
         Snipper
       </router-link>

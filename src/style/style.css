@@ -4,12 +4,6 @@ body {
   margin: 0;
 }
 
-.main-text {
-  font-family: "Courier Prime", monospace;
-  font-weight: 400;
-  font-style: normal;
-}
-
 .lekton-regular {
   font-family: "Lekton", monospace;
   font-weight: 400;
