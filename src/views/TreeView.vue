@@ -4,8 +4,8 @@
       <h4>Hi, {{ userName ?? userEmail ?? '' }}</h4>
     </div>
     <div>
-      <TreeTag v-model:selectionKeys="selectedKey" :value="getTreeNodes" selection-mode="single"
-        class="font-weight-bold" @node-select="onNodeSelect">
+      <TreeTag :selectionKeys="store.getSelectedKey" :value="getTreeNodes" selection-mode="single"
+        class="font-weight-bold" @node-select="store.updateCurrentNode">
       </TreeTag>
     </div>
   </div>
@@ -14,38 +14,19 @@
 
 <script setup lang="ts">
 import type { TreeNode } from 'primevue/treenode';
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { computed } from 'vue';
 import { PrimeIcons } from '@primevue/core/api';
-import { eventBus } from '../utils/eventBus';
+import useSharedStore from '../stores/store';
 
-type folderStructureType = {
-  id: number,
-  name: string,
-  snippets: {
-    id: number,
-    content: string,
-    fileName: string
-  }[],
-  children: folderStructureType[]
-}
-
-type UserDetailsType = {
-  userEmail: string,
-  userName: string,
-  folderStructure: folderStructureType[]
-}
-
-// for tree node
-const selectedKey = ref<{ [key: string]: boolean }>({});
-// user details
-const props = defineProps<{ userDetails: UserDetailsType }>();
-const userName = computed(() => props.userDetails.userName);
-const userEmail = computed(() => props.userDetails.userEmail);
+const store = useSharedStore();
+const sharedState = store.$state;
+const userName = computed(() => sharedState?.userDetails?.userName);
+const userEmail = computed(() => sharedState?.userDetails?.userEmail);
 
 const getTreeNodes = computed<TreeNode[]>(() => {
   const nodes: TreeNode[] = [];
-  const rootFolders = props.userDetails.folderStructure;
-  if (rootFolders.length === 0)
+  const rootFolders = sharedState?.userDetails?.folderStructure;
+  if (!rootFolders || rootFolders.length === 0)
     return nodes;
   nodes.push(...(rootFolders.map<TreeNode>(
     (f) => ({
@@ -71,13 +52,19 @@ const getTreeNodes = computed<TreeNode[]>(() => {
     if (f.snippets.length > 0) {
       f.snippets.forEach(
         (s) => {
-          fnode.children!.push({
-            key: 'snippet-' + String(s.id),
+          const key = 'snippet-' + String(s.id);
+          const node = {
+            key,
             label: s.fileName,
             data: s.content,
             icon: PrimeIcons.CODE,
             path: fnode.path + '/' + s.fileName
-          });
+          };
+          fnode.children!.push(node);
+          if (sharedState.newFileKey === key) {
+            store.updateCurrentNode(node);
+            store.updateNewFileKey(null);
+          }
         }
       );
     }
@@ -92,22 +79,6 @@ const getTreeNodes = computed<TreeNode[]>(() => {
   }
 
   return nodes;
-});
-
-const onNodeSelect = (node: TreeNode) => {
-  selectedKey.value = { [node.key]: true };
-  eventBus.emit('currentFilePath', node.path);
-  eventBus.emit('currentNodeId', node.key);
-  eventBus.emit('editorContent', node.data);
-};
-
-const onSetSelectedKey = (key: string) => { selectedKey.value = { [key]: true }; console.log(selectedKey.value); };
-
-onMounted(() => {
-  eventBus.on('setSelectedKey', onSetSelectedKey);
-});
-onUnmounted(() => {
-  eventBus.off('setSelectedKey', onSetSelectedKey);
 });
 
 </script>

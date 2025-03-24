@@ -14,7 +14,8 @@ export default [
   {
     rules: {
       'semi': ['error', 'always'],
-      'quotes': ['error', 'single']
+      'quotes': ['error', 'single'],
+      'no-undef': ['off']  // let typescript plugin handle it
     }
   }
 ];

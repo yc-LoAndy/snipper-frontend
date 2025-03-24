@@ -12,7 +12,7 @@
 
     <div v-else class="top-container">
       <div class="container">
-        <TreeView :userDetails="userDetails" />
+        <TreeView />
         <EditorView />
       </div>
     </div>
@@ -25,34 +25,18 @@ import TreeView from './TreeView.vue';
 import EditorView from './EditorView.vue';
 import { ref, onMounted, onUnmounted } from 'vue';
 import { eventBus } from '../utils/eventBus';
+import useSharedStore from '../stores/store';
 
-type folderStructureType = {
-  id: number,
-  name: string,
-  snippets: {
-    id: number,
-    content: string,
-    fileName: string
-  }[],
-  children: folderStructureType[]
-}
-
-type UserDetailsType = {
-  userEmail: string,
-  userName: string,
-  folderStructure: folderStructureType[]
-}
-
-// user details
-const userDetails = ref<UserDetailsType>({} as UserDetailsType);
-// other
+// shared objects
+const store = useSharedStore();
+// others
 const loading = ref<boolean>(true);
 const error = ref<string | null>(null);
 
 const fetchUserDetail = async () => {
   try {
     const response = await api.get('/user');
-    userDetails.value = response.data;
+    store.updateUserDetail(response.data);
   }
   catch (err) {
     error.value = 'Failed to load user details. Please try again.';
