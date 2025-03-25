@@ -19,6 +19,5 @@ import ErrorAlert from './components/ApiError.vue';
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
 }
 </style>

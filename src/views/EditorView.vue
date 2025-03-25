@@ -21,20 +21,36 @@
       </div>
 
     </div>
-    <TextArea :readonly="!isCreatingNewFile && !isUpdatingFile" class="h-75" v-model="sharedState.currentEditorContent"
-      placeholder="/* Your code here */" name="text-area" id="text-area" ref="editorRef" :style="editorBorderStyle">
-    </TextArea>
+    <div>
+      <codemirror v-model="sharedState.currentEditorContent" :disabled="!isCreatingNewFile && !isUpdatingFile"
+        :extensions="cmExtensions" @ready="handleReady" style="height: 750px;" />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import api from '../utils/api';
-import { ref, computed, nextTick } from 'vue';
+import { ref, shallowRef, computed, nextTick, onMounted, onUnmounted } from 'vue';
 import { useToast } from 'primevue/usetoast';
 import { eventBus } from '../utils/eventBus';
 import ErrorDialog from '../components/ErrorDialog.vue';
 import ConfirmDialog from '../components/ConfirmDialog.vue';
 import useSharedStore from '../stores/store';
+// for codemirror
+import { json } from '@codemirror/lang-json';
+import { html } from '@codemirror/lang-html';
+import { javascript } from '@codemirror/lang-javascript';
+import { python } from '@codemirror/lang-python';
+import { css } from '@codemirror/lang-css';
+import { cpp } from '@codemirror/lang-cpp';
+import { java } from '@codemirror/lang-java';
+import { markdown } from '@codemirror/lang-markdown';
+import { sql } from '@codemirror/lang-sql';
+import { yaml } from '@codemirror/lang-yaml';
+import { vue } from '@codemirror/lang-vue';
+import { oneDark } from '@codemirror/theme-one-dark';
+import { getFileExtension } from '../utils/util';
+import type { TreeNode } from 'primevue/treenode';
 
 const toast = useToast();
 const store = useSharedStore();
@@ -75,16 +91,6 @@ const pathInputStyle = computed(() => isEditing.value
     'font-weight': 'normal'
   }
 );
-const editorBorderStyle = computed(() => isEditing.value
-  ? {
-    '--p-textarea-border-color': '#b818b8',
-    '--p-textarea-hover-border-color': '#d62bd6',
-    '--p-textarea-focus-border-color': '#800080'
-  }
-  : {
-    '--p-textarea-border-color': 'white',
-  }
-);
 
 const btnDisableToggle = computed(
   () => sharedState.currentFilePath ? false : true
@@ -106,14 +112,16 @@ const startCreatingFile = () => {
     sharedState.currentFilePath += '/';
   }
 
-  nextTick(() => editorRef.value.$el.focus());
+  store.updateEditorContent('');
+  nextTick(() => editorRef.value.focus());
 };
 
 // after pushing modify button
 const startUpdatingFile = () => {
+  prevNode = sharedState.currentNode;
   if (sharedState.currentNode?.key.startsWith('snippet')) {
     isUpdatingFile.value = true;
-    nextTick(() => editorRef.value.$el.focus());
+    nextTick(() => editorRef.value.focus());
   }
   else if (sharedState.currentNode?.key.startsWith('folder')) {
     isRenamingFolder.value = true;

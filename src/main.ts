@@ -12,6 +12,9 @@ import Dialog from 'primevue/dialog';
 // for Toast
 import Toast from 'primevue/toast';
 import ToastService from 'primevue/toastservice';
+// for vue-codemirror
+import { basicSetup } from 'codemirror';
+import VueCodemirror from 'vue-codemirror';
 
 import App from './App.vue';
 import router from './router';
@@ -27,7 +30,6 @@ app.use(
 	}
 );
 app.component('TreeTag', Tree);
-app.component('TextArea', Textarea);
 app.component('InputText', InputText);
 app.component('ButtonTag', Button);
 app.component('FloatLabel', FloatLabel);
@@ -35,5 +37,9 @@ app.component('DialogTag', Dialog);
 app.component('ToastTag', Toast);
 
 app.use(ToastService);
-
+app.use(VueCodemirror, {
+	tabSize: 4,
+	placeholder: '/* Your code... */',
+	extensions: [basicSetup]
+});
 app.use(router).mount('#app');
