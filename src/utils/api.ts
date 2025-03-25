@@ -1,10 +1,13 @@
-// eslint-disable @typescript-eslint/no-explicit-any
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from 'axios';
 import { ref } from 'vue';
 import createAuthRefreshInterceptor, { type AxiosAuthRefreshRequestConfig } from 'axios-auth-refresh';
 import useSharedStore from '../stores/store';
+import env from './env';
 
-const api = axios.create({ baseURL: '/api' });
+const api = axios.create({
+	baseURL: import.meta.env.MODE === 'production' ? env.get('VITE_BACKEND_BASE') + '/api' : '/api',
+});
 export const apiError = ref<string | null>(null);
 const refreshAccessToken = async (failedRequest: any) => {
 	const store = useSharedStore();
