@@ -12,8 +12,16 @@
 
     <div v-else class="top-container">
       <div class="container">
-        <TreeView />
-        <EditorView />
+        <div style="width: 100%;">
+          <Splitter>
+            <SplitterPanel :size="5" :minSize="20">
+              <TreeView style="width: 100%; height: 100%;" />
+            </SplitterPanel>
+            <SplitterPanel :size="60" :minSize="40" style="width: 100%; height: 100%; margin-left: 7px;">
+              <EditorView />
+            </SplitterPanel>
+          </Splitter>
+        </div>
       </div>
     </div>
   </div>
@@ -23,6 +31,8 @@
 import api from '../utils/api';
 import TreeView from './TreeView.vue';
 import EditorView from './EditorView.vue';
+import Splitter from 'primevue/splitter';
+import SplitterPanel from 'primevue/splitterpanel';
 import { ref, onMounted, onUnmounted } from 'vue';
 import { eventBus } from '../utils/eventBus';
 import useSharedStore from '../stores/store';
@@ -65,5 +75,12 @@ onUnmounted(() => {
   display: flex;
   height: 100vh;
   gap: 16px;
+}
+
+.p-splitter {
+  --p-splitter-background: #0f0e0e;
+  --p-splitter-gutter-background: #353434;
+  --p-splitter-handle-background: #767575;
+  --p-splitter-border-color: #0f0e0e;
 }
 </style>
