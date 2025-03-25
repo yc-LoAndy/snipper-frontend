@@ -2,24 +2,33 @@
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-md-4">
-        <div class="card mt-5 black-background">
-          <div class="card-body">
-            <form @submit.prevent="handleSubmit">
+        <div class="mt-5">
+          <div>
+            <Form @submit="handleSubmit">
               <div class="mb-3">
-                <label for="username" class="form-label">Username</label>
-                <input type="text" class="form-control" id="username" v-model="username" required>
+                <FloatLabel variant="on">
+                  <InputText type="username" id="username" v-model="username" required />
+                  <label for="username">Username</label>
+                </FloatLabel>
               </div>
               <div class="mb-3">
-                <label for="email" class="form-label">Email address</label>
-                <input type="email" class="form-control" id="email" v-model="email" required>
+                <FloatLabel variant="on">
+                  <InputText type="email" id="email" v-model="email" required />
+                  <label for="email">Email</label>
+                </FloatLabel>
               </div>
               <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
-                <input type="password" class="form-control" id="password" v-model="password" required>
+                <FloatLabel variant="on">
+                  <InputText type="password" id="password" v-model="password" required />
+                  <label for="password">Password</label>
+                </FloatLabel>
               </div>
-              <button type="submit" class="btn btn-success w-50 mt-3">Sign Up</button>
-            </form>
-            <div class="text-center mt-5">
+              <div style="display:flex; justify-content: center;">
+                <ButtonTag severity="secondary" size="small" type="submit" class="btn btn-success w-50 mt-3">Sign Up
+                </ButtonTag>
+              </div>
+            </Form>
+            <div class="text-center mt-3">
               <a href="/">Already have an account? Login</a>
             </div>
           </div>
@@ -33,6 +42,7 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import api from '../utils/api';
+import { Form } from '@primevue/forms';
 
 const username = ref('');
 const email = ref('');
@@ -55,29 +65,24 @@ const handleSubmit = async () => {
 
 <style scoped>
 a {
-  margin-top: 50px;
-  color: #7fd1d1;
+  color: #a7a4a4;
 }
 
-.black-background {
-  background-color: #0f0e0e;
-  color: #d9e2eb;
+.p-button {
+  font-weight: bold;
+  --p-button-sm-font-size: 16px;
 }
 
-input {
-  background-color: #babbbd;
-  height: 5%;
+.p-inputtext {
+  width: 100%;
+  --p-inputtext-color: #a7a4a4;
+  --p-inputtext-background: #0f0f0f;
+  --p-inputtext-filled-background: #0f0f0f;
+  --p-inputtext-filled-focus-background: #0f0f0f;
 }
 
-button {
-  color: #000;
-  background-color: #6e9494;
-  border: #6e9494;
-}
-
-button:hover {
-  color: #000;
-  background-color: #7fd1d1;
-  border: #7fd1d1;
+.p-floatlabel {
+  --p-floatlabel-focus-color: #babbbd;
+  --p-floatlabel-on-active-background: #0f0e0e;
 }
 </style>

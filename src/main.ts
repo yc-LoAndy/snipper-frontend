@@ -4,7 +4,6 @@ import { createPinia } from 'pinia';
 import PrimeVue from 'primevue/config';
 import Aura from '@primeuix/themes/aura';
 import Tree from 'primevue/tree';
-import Textarea from 'primevue/textarea';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import FloatLabel from 'primevue/floatlabel';

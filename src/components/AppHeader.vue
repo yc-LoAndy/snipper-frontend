@@ -1,41 +1,69 @@
 <template>
-  <header class="header">
-    <h1 class="app-title">
-      <router-link to="/">
-        Snipper
-      </router-link>
-    </h1>
-    <p class="description courier-prime-regular">Code snippet manager</p>
+  <header>
+    <nav>
+      <div class="logo">Snipper</div>
+      <div class="nav-links">
+        <ButtonTag rounded @click="router.push('/'); console.log(store.isAuthenticated)" class="btn logout-btn"
+          label="Home" severity="secondary" variant="text">
+        </ButtonTag>
+        <ButtonTag v-if="store.isAuthenticated" rounded @click="toLogout" class="btn logout-btn" label="Logout"
+          severity="secondary" variant="text">
+        </ButtonTag>
+      </div>
+    </nav>
   </header>
 </template>
 
 <script setup lang="ts">
+import { useRouter } from 'vue-router';
+import api from '../utils/api';
+import useSharedStore from '../stores/store';
+
+const store = useSharedStore();
+const router = useRouter();
+const toLogout = async () => {
+  await api.post('/logout');
+  localStorage.removeItem('accessToken');
+  store.updateAuthStatus(false);
+  router.push('/');
+};
 </script>
 
 <style scoped>
-.header {
+header {
+  background-color: black;
+  padding: 1rem;
+}
+
+nav {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  padding: 30px;
-  text-align: center;
+  max-width: 75%;
+  margin: 0 auto;
 }
 
-a {
-  color: inherit !important;
+.logo {
+  font-size: 2rem;
+  font-weight: bold;
 }
 
-.app-title {
-  color: aliceblue;
-  margin: 0;
-  font-size: 50px;
-  letter-spacing: 1px;
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
 }
 
-.description {
-  margin-top: 5px;
-  font-size: 16px;
-  color: #847676;
+/* .nav-links a {
+  text-decoration: none;
+  color: #333;
 }
+
+.nav-links a:hover {
+  color: #0066cc;
+}
+
+.logout-btn {
+  margin-left: 1rem;
+} */
 </style>
