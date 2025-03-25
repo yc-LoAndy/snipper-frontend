@@ -19,10 +19,12 @@ declare global {
 	}
 	
 	type SharedState = {
+		isAuthenticated: boolean
 		userDetails: UserDetailsType | null
 		currentNode: TreeNode | null
 		currentFilePath: string
 		currentEditorContent: string
-		newFileKey: string | null
+		newFileKeys: string[]
+		currentExpandedKeys: Record<string, boolean>
 	}
 }

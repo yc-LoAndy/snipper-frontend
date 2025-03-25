@@ -1,11 +1,13 @@
+// eslint-disable @typescript-eslint/no-explicit-any
 import axios from 'axios';
 import { ref } from 'vue';
 import createAuthRefreshInterceptor, { type AxiosAuthRefreshRequestConfig } from 'axios-auth-refresh';
+import useSharedStore from '../stores/store';
 
 const api = axios.create({ baseURL: '/api' });
 export const apiError = ref<string | null>(null);
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const refreshAccessToken = async (failedRequest: any) => {
+	const store = useSharedStore();
     try {
         const response = await axios.post(
             '/api/token', {}, {
@@ -15,11 +17,14 @@ const refreshAccessToken = async (failedRequest: any) => {
         const { accessToken } = response.data;
 
         localStorage.setItem('accessToken', accessToken);
+		
+		store.updateAuthStatus(true);
         failedRequest.response.config.headers['Authorization'] = `Bearer ${accessToken}`;
         return Promise.resolve(failedRequest);
     } catch (error: any) {
         if (error.response && error.response.status === 401) {
             localStorage.removeItem('accessToken');
+			store.updateAuthStatus(false);
             error.response.data.message = 'User logged-out';
         }
         return Promise.reject(error);

@@ -4,8 +4,9 @@
       <h4>Hi, {{ userName ?? userEmail ?? '' }}</h4>
     </div>
     <div>
-      <TreeTag :selectionKeys="store.getSelectedKey" :value="getTreeNodes" selection-mode="single"
-        class="font-weight-bold" @node-select="store.updateCurrentNode">
+      <TreeTag :selectionKeys="store.getSelectedKey" :value="getTreeNodes"
+        :expandedKeys="sharedState.currentExpandedKeys" @update:expandedKeys="store.updateCurrentExpanedeKeys"
+        selection-mode="single" class="font-weight-bold" @node-select="store.updateCurrentNode">
       </TreeTag>
     </div>
   </div>
@@ -28,25 +29,37 @@ const getTreeNodes = computed<TreeNode[]>(() => {
   const rootFolders = sharedState?.userDetails?.folderStructure;
   if (!rootFolders || rootFolders.length === 0)
     return nodes;
-  nodes.push(...(rootFolders.map<TreeNode>(
-    (f) => ({
-      key: 'folder-' + String(f.id),
-      label: f.name,
-      children: [],
-      icon: PrimeIcons.FOLDER,
-      path: '/' + f.name
-    })
-  )));
+  rootFolders.forEach(
+    (f) => {
+      const key = 'folder-' + String(f.id);
+      const node = {
+        key: 'folder-' + String(f.id),
+        label: f.name,
+        children: [],
+        icon: PrimeIcons.FOLDER,
+        path: '/' + f.name
+      };
+      nodes.push(node);
+      if (sharedState.newFileKeys.find((k) => k === f.name)) {
+        store.addExpanedeKeys(key);
+      }
+    }
+  );
 
   function recursivePushNodes(f: folderStructureType, fnode: TreeNode) {
     for (const ch of f.children) {
-      fnode.children!.push({
-        key: 'folder-' + String(ch.id),
+      const key = 'folder-' + String(ch.id);
+      const node = {
+        key,
         label: ch.name,
         children: [],
         icon: PrimeIcons.FOLDER,
         path: fnode.path + '/' + ch.name
-      });
+      };
+      fnode.children!.push(node);
+      if (sharedState.newFileKeys.find((k) => k === ch.name)) {
+        store.addExpanedeKeys(key);
+      }
     }
 
     if (f.snippets.length > 0) {
@@ -61,9 +74,9 @@ const getTreeNodes = computed<TreeNode[]>(() => {
             path: fnode.path + '/' + s.fileName
           };
           fnode.children!.push(node);
-          if (sharedState.newFileKey === key) {
+          if (sharedState.newFileKeys[sharedState.newFileKeys.length - 1] === s.fileName) {
             store.updateCurrentNode(node);
-            store.updateNewFileKey(null);
+            store.updateNewFileKeys('');
           }
         }
       );

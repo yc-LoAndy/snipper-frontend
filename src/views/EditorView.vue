@@ -1,7 +1,7 @@
 <template>
   <ConfirmDialog ref="confirmDialogRef" />
   <ErrorDialog ref="errorDialogRef" />
-  <div class="content-container">
+  <div>
     <div class="file-path-container">
 
       <InputText :readonly="!isEditing" type="text" v-model="sharedState.currentFilePath"
@@ -61,20 +61,46 @@ const isUpdatingFile = ref<boolean>(false);
 const isRenamingFolder = ref(false);
 const isEditing = computed(
   () => isUpdatingFile.value || isCreatingNewFile.value || isRenamingFolder.value);
-
-let prevFilePath = '';
-let prevEditorContent = '';
+let prevNode: TreeNode | null = null;
 // refs
-const editorRef = ref();
+const editorRef = shallowRef();
 const filePathInputRef = ref();
 const errorDialogRef = ref<InstanceType<typeof ErrorDialog> | null>(null);
 const confirmDialogRef = ref<InstanceType<typeof ConfirmDialog> | null>(null);
 
+const cmExtensions = computed(() => {
+  const ext = [oneDark];
+  const extMap = new Map([
+    ['.js', javascript()],
+    ['.html', html()],
+    ['.json', json()],
+    ['.py', python()],
+    ['.css', css()],
+    ['.cpp', cpp()],
+    ['.java', java()],
+    ['.md', markdown()],
+    ['.sql', sql()],
+    ['.yaml', yaml()],
+    ['.yml', yaml()],
+    ['.vue', vue()],
+  ]);
+  if (store.currentFilePath) {
+    const fileExt = '.' + getFileExtension(store.currentFilePath);
+    if (extMap.has(fileExt)) {
+      ext.push(extMap.get(fileExt)!);
+    }
+  }
+  return ext;
+});
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const handleReady = (payload: any) => {
+  editorRef.value = payload.view;
+};
+
+
 function resetView() {
   store.updateEditorContent('');
   store.updateCurrentNode(null);
-  prevFilePath = '';
-  prevEditorContent = '';
 }
 
 // obvious style when entering editing
@@ -98,9 +124,7 @@ const btnDisableToggle = computed(
 
 // after pushing create button
 const startCreatingFile = () => {
-  prevFilePath = sharedState.currentFilePath;
-  prevEditorContent = sharedState.currentEditorContent;
-  sharedState.currentEditorContent = '';
+  prevNode = sharedState.currentNode;
   isCreatingNewFile.value = true;
   filePathInputRef.value.$el.placeholder = '';
 
@@ -131,12 +155,9 @@ const startUpdatingFile = () => {
 
 // canceling edit
 const cancelEdit = () => {
-  sharedState.currentFilePath = prevFilePath;
-  sharedState.currentEditorContent = prevEditorContent;
   filePathInputRef.value.$el.placeholder = 'Current file path';
-  isUpdatingFile.value = false;
-  isCreatingNewFile.value = false;
-  isRenamingFolder.value = false;
+  isUpdatingFile.value = isCreatingNewFile.value = isRenamingFolder.value = false;
+  store.updateCurrentNode(prevNode);
 };
 
 // confim editing
@@ -158,22 +179,20 @@ const saveEdit = async () => {
           detail: toastDetail,
           life: 5000
         });
-        return response.data;
       }
     }
     catch {
       resetView();
     }
-    return undefined;
   }
 
   if (isCreatingNewFile.value) {
     isCreatingNewFile.value = false;
-    const responseData = await saveEditTemplate('/snippet', 'post', {
+    await saveEditTemplate('/snippet', 'post', {
       filePath: sharedState.currentFilePath,
       content: sharedState.currentEditorContent
     }, 201, 'Snippet created');
-    store.updateNewFileKey(`snippet-${responseData.snippetId}`);
+    store.updateNewFileKeys(sharedState.currentFilePath);
   }
   else if (isUpdatingFile.value && sharedState.currentNode) {
     isUpdatingFile.value = false;
@@ -218,37 +237,24 @@ const onDelete = async () => {
   }
   resetView();
 };
+
+
+const whenTreeGotFocus = () => {
+  isUpdatingFile.value = isCreatingNewFile.value = isRenamingFolder.value = false;
+};
+onMounted(() => {
+  eventBus.on('treeGotFocus', whenTreeGotFocus);
+});
+onUnmounted(() => {
+  eventBus.off('treeGotFocus', whenTreeGotFocus);
+});
 </script>
 
 <style scoped>
-TextArea {
-  color: #d9e2eb;
-  background-color: #0f0e0e;
-  resize: none;
-  padding: 15px;
-  font-family: "Courier Prime", monospace;
-  font-weight: 400;
-  font-style: normal;
-}
-
-.p-textarea {
-  --p-textarea-focus-border-color: white;
-  --p-textarea-border-radius: 10px;
-}
-
-.content-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
 .file-path-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
-  padding-left: 5px;
-  padding-right: 5px;
 }
 
 .toolbar-btns {
