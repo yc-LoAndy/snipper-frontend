@@ -54,6 +54,9 @@ api.interceptors.request.use(
 api.interceptors.response.use(
 	(response) => {
 		const store = useUserStateStore();
+		if (localStorage.getItem('accessToken'))
+			store.updateAuthStatus(true);
+
 		store.updateLoadingStatus(false);
 		return Promise.resolve(response);
 	}
