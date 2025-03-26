@@ -23,6 +23,7 @@ const refreshAccessToken = async (failedRequest: any) => {
 		
 		store.updateAuthStatus(true);
         failedRequest.response.config.headers['Authorization'] = `Bearer ${accessToken}`;
+		store.updateLoadingStatus(false);
         return Promise.resolve(failedRequest);
     } catch (error: any) {
         if (error.response && error.response.status === 401) {
@@ -38,12 +39,24 @@ const refreshAccessToken = async (failedRequest: any) => {
 // Add the access-token to the Authorization header
 api.interceptors.request.use(
     (config) => {
+		
         const token = localStorage.getItem('accessToken');
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
+		const store = useUserStateStore();
+		store.updateLoadingStatus(true);
         return config;
     }
+);
+
+// cancel loading status when getting response
+api.interceptors.response.use(
+	(response) => {
+		const store = useUserStateStore();
+		store.updateLoadingStatus(false);
+		return Promise.resolve(response);
+	}
 );
 
 // Response interceptors
@@ -60,6 +73,8 @@ api.interceptors.response.use(
         } else {
             apiError.value = 'Network error';
         }
+		const store = useUserStateStore();
+		store.updateLoadingStatus(false);
         return Promise.reject(error);
     }
 );

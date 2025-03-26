@@ -1,12 +1,6 @@
 <template>
   <div class="mt-4">
-    <div v-if="loading" class="d-flex justify-content-center">
-      <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Loading...</span>
-      </div>
-    </div>
-
-    <div v-else-if="error" class="alert alert-danger" role="alert">
+    <div v-if="error" class="alert alert-danger" role="alert">
       {{ error }}
     </div>
 
@@ -40,7 +34,6 @@ import useUserStateStore from '../stores/userStateStore';
 // shared objects
 const store = useUserStateStore();
 // others
-const loading = ref<boolean>(true);
 const error = ref<string | null>(null);
 
 const fetchUserDetail = async () => {
@@ -60,9 +53,7 @@ const refreshData = async () => {
 
 onMounted(async () => {
   eventBus.on('refreshData', refreshData);
-  loading.value = true;
   await fetchUserDetail();
-  loading.value = false;
 });
 
 onUnmounted(() => {

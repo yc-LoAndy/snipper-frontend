@@ -24,4 +24,15 @@ const router = createRouter({
   ],
 });
 
+import userStateStore from '../stores/userStateStore';
+router.beforeEach(async (_, __, next) => {
+	userStateStore().updateLoadingStatus(true);
+	const sleep = () => new Promise(r => setTimeout(r, 3000));
+	await sleep();
+	next();
+});
+router.afterEach(() => {
+	userStateStore().updateLoadingStatus(false);
+});
+
 export default router;

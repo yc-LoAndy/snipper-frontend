@@ -2,6 +2,7 @@
   <div id="app">
     <ToastTag />
     <ErrorAlert />
+    <LoadingSpinner />
     <AppHeader />
     <router-view />
   </div>
@@ -11,6 +12,7 @@
 import { RouterView } from 'vue-router';
 import AppHeader from './components/AppHeader.vue';
 import ErrorAlert from './components/ApiError.vue';
+import LoadingSpinner from './components/LoadingSpinner.vue';
 </script>
 
 <style>
