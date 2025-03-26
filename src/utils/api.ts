@@ -2,7 +2,7 @@
 import axios from 'axios';
 import { ref } from 'vue';
 import createAuthRefreshInterceptor, { type AxiosAuthRefreshRequestConfig } from 'axios-auth-refresh';
-import useSharedStore from '../stores/store';
+import useUserStateStore from '../stores/userStateStore';
 import env from './env';
 
 const api = axios.create({
@@ -10,7 +10,7 @@ const api = axios.create({
 });
 export const apiError = ref<string | null>(null);
 const refreshAccessToken = async (failedRequest: any) => {
-	const store = useSharedStore();
+	const store = useUserStateStore();
     try {
         const response = await axios.post(
             '/api/token', {}, {

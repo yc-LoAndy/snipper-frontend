@@ -35,10 +35,10 @@ import Splitter from 'primevue/splitter';
 import SplitterPanel from 'primevue/splitterpanel';
 import { ref, onMounted, onUnmounted } from 'vue';
 import { eventBus } from '../utils/eventBus';
-import useSharedStore from '../stores/store';
+import useUserStateStore from '../stores/userStateStore';
 
 // shared objects
-const store = useSharedStore();
+const store = useUserStateStore();
 // others
 const loading = ref<boolean>(true);
 const error = ref<string | null>(null);

@@ -4,9 +4,9 @@
       <h4>Hi, {{ userName ?? userEmail ?? '' }}</h4>
     </div>
     <div>
-      <TreeTag :selectionKeys="store.getSelectedKey" :value="getTreeNodes"
-        :expandedKeys="sharedState.currentExpandedKeys" @update:expandedKeys="store.updateCurrentExpanedeKeys"
-        selection-mode="single" class="font-weight-bold" @node-select="store.updateCurrentNode">
+      <TreeTag :selectionKeys="editorStore.getSelectedKey" :value="getTreeNodes"
+        :expandedKeys="editorStore.currentExpandedKeys" @update:expandedKeys="editorStore.updateCurrentExpanedeKeys"
+        selection-mode="single" class="font-weight-bold" @node-select="editorStore.updateCurrentNode">
       </TreeTag>
     </div>
   </div>
@@ -17,16 +17,17 @@
 import type { TreeNode } from 'primevue/treenode';
 import { computed } from 'vue';
 import { PrimeIcons } from '@primevue/core/api';
-import useSharedStore from '../stores/store';
+import useEditorStore from '../stores/editorStore';
+import useUserStateStore from '../stores/userStateStore';
 
-const store = useSharedStore();
-const sharedState = store.$state;
-const userName = computed(() => sharedState?.userDetails?.userName);
-const userEmail = computed(() => sharedState?.userDetails?.userEmail);
+const editorStore = useEditorStore();
+const userStore = useUserStateStore();
+const userName = computed(() => userStore?.userDetails?.userName);
+const userEmail = computed(() => userStore?.userDetails?.userEmail);
 
 const getTreeNodes = computed<TreeNode[]>(() => {
   const nodes: TreeNode[] = [];
-  const rootFolders = sharedState?.userDetails?.folderStructure;
+  const rootFolders = userStore?.userDetails?.folderStructure;
   if (!rootFolders || rootFolders.length === 0)
     return nodes;
   rootFolders.forEach(
@@ -40,8 +41,8 @@ const getTreeNodes = computed<TreeNode[]>(() => {
         path: '/' + f.name
       };
       nodes.push(node);
-      if (sharedState.newFileKeys.find((k) => k === f.name)) {
-        store.addExpanedeKeys(key);
+      if (editorStore.newFileKeys.find((k) => k === f.name)) {
+        editorStore.addExpanedeKeys(key);
       }
     }
   );
@@ -57,8 +58,8 @@ const getTreeNodes = computed<TreeNode[]>(() => {
         path: fnode.path + '/' + ch.name
       };
       fnode.children!.push(node);
-      if (sharedState.newFileKeys.find((k) => k === ch.name)) {
-        store.addExpanedeKeys(key);
+      if (editorStore.newFileKeys.find((k) => k === ch.name)) {
+        editorStore.addExpanedeKeys(key);
       }
     }
 
@@ -74,9 +75,9 @@ const getTreeNodes = computed<TreeNode[]>(() => {
             path: fnode.path + '/' + s.fileName
           };
           fnode.children!.push(node);
-          if (sharedState.newFileKeys[sharedState.newFileKeys.length - 1] === s.fileName) {
-            store.updateCurrentNode(node);
-            store.updateNewFileKeys('');
+          if (editorStore.newFileKeys[editorStore.newFileKeys.length - 1] === s.fileName) {
+            editorStore.updateCurrentNode(node);
+            editorStore.updateNewFileKeys('');
           }
         }
       );

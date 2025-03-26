@@ -17,9 +17,9 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
 import api from '../utils/api';
-import useSharedStore from '../stores/store';
+import useUserStateStore from '../stores/userStateStore';
 
-const store = useSharedStore();
+const store = useUserStateStore();
 const router = useRouter();
 const toLogout = async () => {
   await api.post('/logout');

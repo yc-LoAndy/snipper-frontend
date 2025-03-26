@@ -3,10 +3,8 @@ import { defineStore } from 'pinia';
 import type { TreeNode } from 'primevue/treenode';
 import { trimAny } from '../utils/util';
 
-export default defineStore('shared', {
-	state: (): SharedState => ({
-		isAuthenticated: false,
-		userDetails: null,
+export default defineStore('useEditorStore', {
+	state: (): EditorState => ({
 		currentNode: null,
 		currentFilePath: '',
 		currentEditorContent: '',
@@ -14,12 +12,6 @@ export default defineStore('shared', {
 		newFileKeys: []
 	}),
 	actions: {
-		updateAuthStatus(v: boolean) {
-			this.isAuthenticated = v;
-		},
-		updateUserDetail(newUserDetails: UserDetailsType) {
-			this.userDetails = newUserDetails;
-		},
 		updateEditorContent(content: string) {
 			this.currentEditorContent = content;
 		},

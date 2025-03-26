@@ -4,8 +4,8 @@
   <div>
     <div class="file-path-container">
 
-      <InputText :readonly="!isEditing" type="text" v-model="sharedState.currentFilePath"
-        placeholder="Current file path" :style="pathInputStyle" ref="filePathInputRef" @keydown.enter="saveEdit" />
+      <InputText :readonly="!isEditing" type="text" v-model="store.currentFilePath" placeholder="Current file path"
+        :style="pathInputStyle" ref="filePathInputRef" @keydown.enter="saveEdit" />
 
       <div v-if="!isEditing">
         <ButtonTag rounded class="toolbar-btns" severity="primary" variant="text" icon="pi pi-plus" label="Create"
@@ -22,7 +22,7 @@
 
     </div>
     <div>
-      <codemirror v-model="sharedState.currentEditorContent" :disabled="!isCreatingNewFile && !isUpdatingFile"
+      <codemirror v-model="store.currentEditorContent" :disabled="!isCreatingNewFile && !isUpdatingFile"
         :extensions="cmExtensions" @ready="handleReady" style="height: 750px;" />
     </div>
   </div>
@@ -35,7 +35,7 @@ import { useToast } from 'primevue/usetoast';
 import { eventBus } from '../utils/eventBus';
 import ErrorDialog from '../components/ErrorDialog.vue';
 import ConfirmDialog from '../components/ConfirmDialog.vue';
-import useSharedStore from '../stores/store';
+import useEditorStore from '../stores/editorStore';
 // for codemirror
 import { json } from '@codemirror/lang-json';
 import { html } from '@codemirror/lang-html';
@@ -53,8 +53,7 @@ import { getFileExtension } from '../utils/util';
 import type { TreeNode } from 'primevue/treenode';
 
 const toast = useToast();
-const store = useSharedStore();
-const sharedState = store.$state;
+const store = useEditorStore();
 // flags
 const isCreatingNewFile = ref(false);
 const isUpdatingFile = ref<boolean>(false);
@@ -106,12 +105,12 @@ function resetView() {
 // obvious style when entering editing
 const pathInputStyle = computed(() => isEditing.value
   ? {
-    'width': sharedState.currentFilePath ? `${sharedState.currentFilePath.length + 5}ch` : '',
+    'width': store.currentFilePath ? `${store.currentFilePath.length + 5}ch` : '',
     '--p-inputtext-border-color': 'white',
     'color': 'white',
     'font-weight': '700'
   } : {
-    'width': sharedState.currentFilePath ? `${sharedState.currentFilePath.length + 5}ch` : '',
+    'width': store.currentFilePath ? `${store.currentFilePath.length + 5}ch` : '',
     '--p-inputtext-border-color': '#0f0e0e',
     'color': '#a7a4a4',
     'font-weight': 'normal'
@@ -119,21 +118,21 @@ const pathInputStyle = computed(() => isEditing.value
 );
 
 const btnDisableToggle = computed(
-  () => sharedState.currentFilePath ? false : true
+  () => store.currentFilePath ? false : true
 );
 
 // after pushing create button
 const startCreatingFile = () => {
-  prevNode = sharedState.currentNode;
+  prevNode = store.currentNode;
   isCreatingNewFile.value = true;
   filePathInputRef.value.$el.placeholder = '';
 
-  if (sharedState.currentNode?.key.startsWith('snippet')) {
-    const indexOfLastSlash = sharedState.currentFilePath.lastIndexOf('/');
-    sharedState.currentFilePath = sharedState.currentFilePath.substring(0, indexOfLastSlash + 1);
+  if (store.currentNode?.key.startsWith('snippet')) {
+    const indexOfLastSlash = store.currentFilePath.lastIndexOf('/');
+    store.currentFilePath = store.currentFilePath.substring(0, indexOfLastSlash + 1);
   }
   else {
-    sharedState.currentFilePath += '/';
+    store.currentFilePath += '/';
   }
 
   store.updateEditorContent('');
@@ -142,12 +141,12 @@ const startCreatingFile = () => {
 
 // after pushing modify button
 const startUpdatingFile = () => {
-  prevNode = sharedState.currentNode;
-  if (sharedState.currentNode?.key.startsWith('snippet')) {
+  prevNode = store.currentNode;
+  if (store.currentNode?.key.startsWith('snippet')) {
     isUpdatingFile.value = true;
     nextTick(() => editorRef.value.focus());
   }
-  else if (sharedState.currentNode?.key.startsWith('folder')) {
+  else if (store.currentNode?.key.startsWith('folder')) {
     isRenamingFolder.value = true;
     nextTick(() => filePathInputRef.value.$el.focus());
   }
@@ -162,7 +161,7 @@ const cancelEdit = () => {
 
 // confim editing
 const saveEdit = async () => {
-  if (!sharedState.currentFilePath || sharedState.currentFilePath.endsWith('/')) {
+  if (!store.currentFilePath || store.currentFilePath.endsWith('/')) {
     errorDialogRef.value?.showError('Invalid path', 'Please provide a correct path.');
     return;
   }
@@ -189,31 +188,31 @@ const saveEdit = async () => {
   if (isCreatingNewFile.value) {
     isCreatingNewFile.value = false;
     await saveEditTemplate('/snippet', 'post', {
-      filePath: sharedState.currentFilePath,
-      content: sharedState.currentEditorContent
+      filePath: store.currentFilePath,
+      content: store.currentEditorContent
     }, 201, 'Snippet created');
-    store.updateNewFileKeys(sharedState.currentFilePath);
+    store.updateNewFileKeys(store.currentFilePath);
   }
-  else if (isUpdatingFile.value && sharedState.currentNode) {
+  else if (isUpdatingFile.value && store.currentNode) {
     isUpdatingFile.value = false;
-    await saveEditTemplate(`snippet/${sharedState.currentNode.key.replace('snippet-', '')}`, 'put', {
-      newContent: sharedState.currentEditorContent,
-      newPath: sharedState.currentFilePath
+    await saveEditTemplate(`snippet/${store.currentNode.key.replace('snippet-', '')}`, 'put', {
+      newContent: store.currentEditorContent,
+      newPath: store.currentFilePath
     }, 200, 'Snippet updated');
   }
-  else if (isRenamingFolder.value && sharedState.currentNode) {
+  else if (isRenamingFolder.value && store.currentNode) {
     isRenamingFolder.value = false;
-    await saveEditTemplate(`/folder/${sharedState.currentNode.key.replace('folder-', '')}`, 'put', {
-      newFolderPath: sharedState.currentFilePath
+    await saveEditTemplate(`/folder/${store.currentNode.key.replace('folder-', '')}`, 'put', {
+      newFolderPath: store.currentFilePath
     }, 200, 'Folder updated');
   }
   eventBus.emit('refreshData');
 };
 
 const onDelete = async () => {
-  if (!confirmDialogRef.value || !sharedState.currentNode) return;
+  if (!confirmDialogRef.value || !store.currentNode) return;
 
-  const obj = sharedState.currentNode.key.startsWith('folder') ? 'folder' : 'snippet';
+  const obj = store.currentNode.key.startsWith('folder') ? 'folder' : 'snippet';
   const userConfirmed = await confirmDialogRef.value.confirm(
     `Delete ${obj}`,
     `Are you sure you want to delete this ${obj}?${obj === 'folder' ? ' All contents will be deleted.' : ''}`
@@ -221,7 +220,7 @@ const onDelete = async () => {
   if (userConfirmed) {
     try {
       await api.delete(
-        `/${obj}/${sharedState.currentNode.key.replace(`${obj}-`, '')}`, { withCredentials: true }
+        `/${obj}/${store.currentNode.key.replace(`${obj}-`, '')}`, { withCredentials: true }
       );
       toast.add({
         severity: 'success',

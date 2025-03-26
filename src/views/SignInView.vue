@@ -38,12 +38,12 @@ import { useRouter } from 'vue-router';
 import api from '../utils/api';
 import type { AxiosAuthRefreshRequestConfig } from 'axios-auth-refresh';
 import { Form } from '@primevue/forms';
-import useSharedStore from '../stores/store';
+import useUserStateStore from '../stores/userStateStore';
 
 const email = ref('');
 const password = ref('');
 const router = useRouter();
-const store = useSharedStore();
+const store = useUserStateStore();
 
 const handleSubmit = async () => {
   try {
