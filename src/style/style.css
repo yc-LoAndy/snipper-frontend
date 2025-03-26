@@ -3,27 +3,3 @@ body {
   color: #d9e2eb;
   margin: 0;
 }
-
-.lekton-regular {
-  font-family: "Lekton", monospace;
-  font-weight: 400;
-  font-style: normal;
-}
-
-.lekton-bold {
-  font-family: "Lekton", monospace;
-  font-weight: 700;
-  font-style: normal;
-}
-
-.courier-prime-regular {
-  font-family: "Courier Prime", monospace;
-  font-weight: 400;
-  font-style: normal;
-}
-
-.courier-prime-bold {
-  font-family: "Courier Prime", monospace;
-  font-weight: 700;
-  font-style: normal;
-}

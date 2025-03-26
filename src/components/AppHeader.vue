@@ -1,7 +1,7 @@
 <template>
   <header>
     <nav>
-      <div class="logo">Snipper</div>
+      <div class="logo"><a href="/" style="text-decoration: none; color: white;">Snipper</a></div>
       <div class="nav-links">
         <ButtonTag rounded @click="router.push('/'); console.log(store.isAuthenticated)" class="btn logout-btn"
           label="Home" severity="secondary" variant="text">
@@ -44,8 +44,10 @@ nav {
 }
 
 .logo {
+  font-family: "Bowlby One", sans-serif;
+  font-weight: 400;
+  font-style: normal;
   font-size: 2rem;
-  font-weight: bold;
 }
 
 .nav-links {
@@ -53,17 +55,4 @@ nav {
   align-items: center;
   gap: 1.5rem;
 }
-
-/* .nav-links a {
-  text-decoration: none;
-  color: #333;
-}
-
-.nav-links a:hover {
-  color: #0066cc;
-}
-
-.logout-btn {
-  margin-left: 1rem;
-} */
 </style>

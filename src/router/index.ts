@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/SignInView.vue';
 import SignUpView from '../views/SignUpView.vue';
 import MainView from '../views/MainView.vue';
+import userStateStore from '../stores/userStateStore';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -24,16 +25,13 @@ const router = createRouter({
   ],
 });
 
-/*
-import userStateStore from '../stores/userStateStore';
+
 router.beforeEach(async (_, __, next) => {
 	userStateStore().updateLoadingStatus(true);
-	const sleep = () => new Promise(r => setTimeout(r, 3000));
-	await sleep();
 	next();
 });
 router.afterEach(() => {
 	userStateStore().updateLoadingStatus(false);
 });
-*/
+
 export default router;

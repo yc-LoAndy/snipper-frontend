@@ -3,7 +3,11 @@
     <div class="row" style="display:flex; justify-content: center;">
       <div class="col-md-4">
         <div class="mt-5">
-          <div class="">
+          <div class="logo">Snipper</div>
+          <div class="mb-5 logo-description">
+            <p>- Code Snippet Manager -</p>
+          </div>
+          <div>
             <Form @submit="handleSubmit">
               <div class="mb-3">
                 <FloatLabel variant="on">
@@ -66,6 +70,18 @@ const handleSubmit = async () => {
 </script>
 
 <style scoped>
+.logo {
+  text-align: center;
+  font-family: "Bowlby One", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 4rem;
+}
+
+.logo-description {
+  text-align: center;
+}
+
 a {
   color: #a7a4a4;
 }

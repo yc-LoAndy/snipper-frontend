@@ -17,8 +17,12 @@ import LoadingSpinner from './components/LoadingSpinner.vue';
 
 <style>
 #app {
-  /* font-family: "Courier Prime", monospace; */
+  font-family: "Kumbh Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
   font-style: normal;
+  font-variation-settings:
+    "YOPQ" 300;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
