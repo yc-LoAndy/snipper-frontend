@@ -31,7 +31,9 @@ router.beforeEach(async (_, __, next) => {
 	next();
 });
 router.afterEach(() => {
-	userStateStore().updateLoadingStatus(false);
+	const store = userStateStore();
+	store.updateAuthStatus(!!localStorage.getItem('accessToken'));
+	store.updateLoadingStatus(false);
 });
 
 export default router;

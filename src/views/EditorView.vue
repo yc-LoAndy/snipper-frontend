@@ -1,11 +1,13 @@
 <template>
   <ConfirmDialog ref="confirmDialogRef" />
   <ErrorDialog ref="errorDialogRef" />
+  <SettingDialog ref="settingDialogRef" @update:textSize="onUpdateTextSize" />
   <div>
     <div class="file-path-container">
-
-      <InputText :readonly="!isEditing" type="text" v-model="store.currentFilePath" placeholder="Current file path"
-        :style="pathInputStyle" ref="filePathInputRef" @keydown.enter="saveEdit" />
+      <div class="">
+        <InputText :readonly="!isEditing" type="text" v-model="store.currentFilePath" placeholder="Current file path"
+          :style="pathInputStyle" ref="filePathInputRef" @keydown.enter="saveEdit" />
+      </div>
 
       <div v-if="!isEditing">
         <ButtonTag rounded class="toolbar-btns" severity="primary" variant="text" icon="pi pi-plus" label="Create"
@@ -14,6 +16,8 @@
           :disabled="btnDisableToggle" @click="startUpdatingFile" />
         <ButtonTag rounded class="toolbar-btns" severity="danger" variant="text" icon="pi pi-file-edit" label="Delete"
           :disabled="btnDisableToggle" @click="onDelete" />
+        <ButtonTag rounded class="toolbar-btns" severity="secondary" variant="text" icon="pi pi-cog"
+          @click="settingDialogRef?.showSettings" />
       </div>
       <div v-else class="edit-actions">
         <ButtonTag icon="pi pi-check" severity="secondary" rounded size="small" @click="saveEdit" />
@@ -23,7 +27,8 @@
     </div>
     <div>
       <codemirror v-model="store.currentEditorContent" :disabled="!isCreatingNewFile && !isUpdatingFile"
-        :extensions="cmExtensions" @ready="handleReady" style="height: 750px;" />
+        :extensions="cmExtensions" @ready="handleReady" style="height: 750px;"
+        :style="{ 'font-size': `${13 + textSize * 0.15}px` }" />
     </div>
   </div>
 </template>
@@ -32,6 +37,7 @@
 import api from '../utils/api';
 import { ref, shallowRef, computed, nextTick, onMounted, onUnmounted } from 'vue';
 import { useToast } from 'primevue/usetoast';
+import SettingDialog from '../components/SettingDialog.vue';
 import { eventBus } from '../utils/eventBus';
 import ErrorDialog from '../components/ErrorDialog.vue';
 import ConfirmDialog from '../components/ConfirmDialog.vue';
@@ -61,11 +67,15 @@ const isRenamingFolder = ref(false);
 const isEditing = computed(
   () => isUpdatingFile.value || isCreatingNewFile.value || isRenamingFolder.value);
 let prevNode: TreeNode | null = null;
+const textSize = ref(15);
 // refs
 const editorRef = shallowRef();
 const filePathInputRef = ref();
 const errorDialogRef = ref<InstanceType<typeof ErrorDialog> | null>(null);
 const confirmDialogRef = ref<InstanceType<typeof ConfirmDialog> | null>(null);
+const settingDialogRef = ref<InstanceType<typeof SettingDialog> | null>(null);
+
+const onUpdateTextSize = (v: number) => { textSize.value = v; };
 
 const cmExtensions = computed(() => {
   const ext = [oneDark];

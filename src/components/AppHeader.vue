@@ -1,10 +1,16 @@
 <template>
   <header>
     <nav>
-      <div class="logo"><a href="/" style="text-decoration: none; color: white;">Snipper</a></div>
+      <div class="d-flex">
+        <div class="d-flex align-items-center pb-1">
+          <img src="/logo.png" width="30" height="30">
+        </div>
+        <div class="mx-1"></div>
+        <div class="logo"><a href="/">Snipper</a></div>
+      </div>
       <div class="nav-links">
-        <ButtonTag rounded @click="router.push('/'); console.log(store.isAuthenticated)" class="btn logout-btn"
-          label="Home" severity="secondary" variant="text">
+        <ButtonTag rounded @click="router.push('/');" class="btn logout-btn" label="Home" severity="secondary"
+          variant="text">
         </ButtonTag>
         <ButtonTag v-if="store.isAuthenticated" rounded @click="toLogout" class="btn logout-btn" label="Logout"
           severity="secondary" variant="text">
@@ -31,8 +37,13 @@ const toLogout = async () => {
 
 <style scoped>
 header {
-  background-color: black;
+  background-color: 0f0f0f;
   padding: 1rem;
+}
+
+a {
+  text-decoration: none;
+  color: white;
 }
 
 nav {
