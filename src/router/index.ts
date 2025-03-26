@@ -24,6 +24,7 @@ const router = createRouter({
   ],
 });
 
+/*
 import userStateStore from '../stores/userStateStore';
 router.beforeEach(async (_, __, next) => {
 	userStateStore().updateLoadingStatus(true);
@@ -34,5 +35,5 @@ router.beforeEach(async (_, __, next) => {
 router.afterEach(() => {
 	userStateStore().updateLoadingStatus(false);
 });
-
+*/
 export default router;
