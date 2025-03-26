@@ -79,6 +79,7 @@ a {
   --p-inputtext-background: #0f0f0f;
   --p-inputtext-filled-background: #0f0f0f;
   --p-inputtext-filled-focus-background: #0f0f0f;
+  --p-inputtext-focus-border-color: rgb(49, 115, 168);
 }
 
 .p-floatlabel {

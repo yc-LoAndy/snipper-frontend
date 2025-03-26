@@ -22,8 +22,7 @@
                 </FloatLabel>
               </div>
               <div style="display:flex; justify-content: center;">
-                <ButtonTag severity="secondary" size="small" type="submit" class="btn btn-success w-50 mt-3">Login
-                </ButtonTag>
+                <button rounded type="submit" class="login-button mt-2">Login</button>
               </div>
             </Form>
             <div style="display:flex; justify-content: center;" class="mt-3">
@@ -86,9 +85,22 @@ a {
   color: #a7a4a4;
 }
 
-.p-button {
+.login-button {
+  width: 40%;
+  color: white;
   font-weight: bold;
-  --p-button-sm-font-size: 16px;
+  font-size: 18px;
+  background: radial-gradient(134% 244% at 42% -80%, rgb(58, 150, 184) 15%, rgb(54, 19, 158) 100%);
+  border: none;
+  border-radius: 10px;
+  transition: transform 0.2s ease-in-out;
+  cursor: pointer;
+  padding: 10px;
+}
+
+.login-button:hover {
+  opacity: 0.9;
+  transform: scale(1.03);
 }
 
 .p-inputtext {
@@ -97,6 +109,7 @@ a {
   --p-inputtext-background: #0f0f0f;
   --p-inputtext-filled-background: #0f0f0f;
   --p-inputtext-filled-focus-background: #0f0f0f;
+  --p-inputtext-focus-border-color: rgb(49, 115, 168);
 }
 
 .p-floatlabel {
