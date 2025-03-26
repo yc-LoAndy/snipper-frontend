@@ -1,7 +1,7 @@
 class Env {
     private static instance: Env = new Env();
     private REQUIRED_KEYS: string[] = [
-		'VITE_BACKEND_BASE'
+		'VITE_BACKEND_BASE', 'VITE_CLIENT_ID'
     ] as const;
     private variables: { [K in (typeof this.REQUIRED_KEYS)[number]]: string | undefined } = {};
 

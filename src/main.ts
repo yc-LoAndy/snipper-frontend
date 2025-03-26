@@ -15,10 +15,13 @@ import ToastService from 'primevue/toastservice';
 import { basicSetup } from 'codemirror';
 import VueCodemirror from 'vue-codemirror';
 
+import vue3GoogleLogin from 'vue3-google-login';
+
 import App from './App.vue';
 import router from './router';
 import './style/style.css';
 import 'primeicons/primeicons.css';
+import env from './utils/env';
 
 const pinia = createPinia();
 const app = createApp(App);
@@ -41,4 +44,7 @@ app.use(VueCodemirror, {
 	placeholder: '/* Your code... */',
 	extensions: [basicSetup]
 });
+
+app.use(vue3GoogleLogin, { clientId: env.get('VITE_CLIENT_ID') });
+
 app.use(router).mount('#app');
