@@ -12,8 +12,8 @@ export const apiError = ref<string | null>(null);
 const refreshAccessToken = async (failedRequest: any) => {
 	const store = useUserStateStore();
     try {
-        const response = await axios.post(
-            '/api/token', {}, {
+        const response = await api.post(
+            '/token', {}, {
                 withCredentials: true, skipAuthRefresh: true
             } as AxiosAuthRefreshRequestConfig
         );

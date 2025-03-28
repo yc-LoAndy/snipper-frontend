@@ -93,7 +93,8 @@ const handleGoogleAccessTokenLogin = async () => {
     clientId: env.get('VITE_CLIENT_ID')
   });
   const googleAccessToken = response.access_token;
-  await api.post('/google/callback', { accessToken: googleAccessToken });
+  const backendResponse = await api.post('/google/callback', { accessToken: googleAccessToken });
+  localStorage.setItem('accessToken', backendResponse.data.accessToken);
   router.push('/main');
 };
 
