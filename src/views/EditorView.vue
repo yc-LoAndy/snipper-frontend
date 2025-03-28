@@ -43,19 +43,7 @@ import ErrorDialog from '../components/ErrorDialog.vue';
 import ConfirmDialog from '../components/ConfirmDialog.vue';
 import useEditorStore from '../stores/editorStore';
 // for codemirror
-import { json } from '@codemirror/lang-json';
-import { html } from '@codemirror/lang-html';
-import { javascript } from '@codemirror/lang-javascript';
-import { python } from '@codemirror/lang-python';
-import { css } from '@codemirror/lang-css';
-import { cpp } from '@codemirror/lang-cpp';
-import { java } from '@codemirror/lang-java';
-import { markdown } from '@codemirror/lang-markdown';
-import { sql } from '@codemirror/lang-sql';
-import { yaml } from '@codemirror/lang-yaml';
-import { vue } from '@codemirror/lang-vue';
-import { oneDark } from '@codemirror/theme-one-dark';
-import { getFileExtension } from '../utils/util';
+import { getExtension } from '../utils/syntaxSupport';
 import type { TreeNode } from 'primevue/treenode';
 
 const toast = useToast();
@@ -77,30 +65,7 @@ const settingDialogRef = ref<InstanceType<typeof SettingDialog> | null>(null);
 
 const onUpdateTextSize = (v: number) => { textSize.value = v; };
 
-const cmExtensions = computed(() => {
-  const ext = [oneDark];
-  const extMap = new Map([
-    ['.js', javascript()],
-    ['.html', html()],
-    ['.json', json()],
-    ['.py', python()],
-    ['.css', css()],
-    ['.cpp', cpp()],
-    ['.java', java()],
-    ['.md', markdown()],
-    ['.sql', sql()],
-    ['.yaml', yaml()],
-    ['.yml', yaml()],
-    ['.vue', vue()],
-  ]);
-  if (store.currentFilePath) {
-    const fileExt = '.' + getFileExtension(store.currentFilePath);
-    if (extMap.has(fileExt)) {
-      ext.push(extMap.get(fileExt)!);
-    }
-  }
-  return ext;
-});
+const cmExtensions = computed(() => getExtension(store.currentFilePath));
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const handleReady = (payload: any) => {
   editorRef.value = payload.view;
@@ -183,7 +148,7 @@ const saveEdit = async () => {
       const response = await api.request({ method, url, data, withCredentials: true });
       if (response.status === expResStatus) {
         toast.add({
-          severity: 'success',
+          severity: 'secondary',
           summary: 'Success',
           detail: toastDetail,
           life: 5000
@@ -233,7 +198,7 @@ const onDelete = async () => {
         `/${obj}/${store.currentNode.key.replace(`${obj}-`, '')}`, { withCredentials: true }
       );
       toast.add({
-        severity: 'success',
+        severity: 'secondary',
         summary: 'Success',
         detail: `${obj} deleted.`,
         life: 5000

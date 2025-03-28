@@ -19,3 +19,9 @@ export function trimAny(str: string, chars: string[]) {
 
     return (start > 0 || end < str.length) ? str.substring(start, end) : str;
 }
+
+export function stringCount(str: string, pat: string): number {
+	const regex = new RegExp(pat, 'g');
+	const matches = str.match(regex);
+	return matches ? matches.length : 0;
+}

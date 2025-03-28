@@ -3,8 +3,9 @@
     <ToastTag />
     <ErrorAlert />
     <LoadingSpinner />
-    <AppHeader />
+    <AppHeader style="background-color: #0f0e0e" />
     <router-view />
+    <AppFooter />
   </div>
 </template>
 
@@ -13,6 +14,7 @@ import { RouterView } from 'vue-router';
 import AppHeader from './components/AppHeader.vue';
 import ErrorAlert from './components/ApiError.vue';
 import LoadingSpinner from './components/LoadingSpinner.vue';
+import AppFooter from './components/AppFooter.vue';
 </script>
 
 <style>

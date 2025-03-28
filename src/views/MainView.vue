@@ -1,20 +1,22 @@
 <template>
-  <div class="mt-4">
-    <div v-if="error" class="alert alert-danger" role="alert">
-      {{ error }}
-    </div>
+  <div style="background-color: #0f0f0f;">
+    <div class="pt-4">
+      <div v-if="error" class="alert alert-danger" role="alert">
+        {{ error }}
+      </div>
 
-    <div v-else class="top-container">
-      <div class="container">
-        <div style="width: 100%;">
-          <Splitter>
-            <SplitterPanel :size="5" :minSize="20">
-              <TreeView style="width: 100%; height: 100%;" />
-            </SplitterPanel>
-            <SplitterPanel :size="60" :minSize="40" style="width: 100%; height: 100%; margin-left: 7px;">
-              <EditorView />
-            </SplitterPanel>
-          </Splitter>
+      <div v-else class="top-container">
+        <div class="container">
+          <div style="width: 100%;">
+            <Splitter>
+              <SplitterPanel :size="5" :minSize="20">
+                <TreeView style="width: 100%; height: 100%;" />
+              </SplitterPanel>
+              <SplitterPanel :size="60" :minSize="40" style="width: 100%; height: 100%; margin-left: 7px;">
+                <EditorView />
+              </SplitterPanel>
+            </Splitter>
+          </div>
         </div>
       </div>
     </div>
@@ -39,6 +41,7 @@ const error = ref<string | null>(null);
 const fetchUserDetail = async () => {
   try {
     const response = await api.get('/user');
+    console.log('fetchUserDetail', response.data);
     store.updateUserDetail(response.data);
   }
   catch (err) {

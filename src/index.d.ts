@@ -13,8 +13,9 @@ declare global {
 	}
 	
 	type UserDetailsType = {
-		userEmail: string
 		userName: string
+		userEmail: string
+		userAvatarUrl: string
 		folderStructure: folderStructureType[]
 	}
 	
