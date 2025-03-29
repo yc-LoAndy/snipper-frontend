@@ -1,5 +1,12 @@
-# Vue 3 + TypeScript + Vite
+<p align="center">
+    <img src="public/logo.png" alt="logo" width="120px" />
+    <h1 align="center">Snipper - Your Snippet Manager</h1>
+</p>
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+:sparkles: Visit our [website](https://snipper-frontend-production.up.railway.app/) here!<br>
+Snipper is a simple tool app for you to keep your code snippets, supporting various language syntax highlighting.
 
-Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
+This is the frontend repository of Snipper. The frontend of the website is built with Typescript + Vue.js.
+
+## Website Preview
+![website image](public/image.png)
