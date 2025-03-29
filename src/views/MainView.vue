@@ -41,7 +41,6 @@ const error = ref<string | null>(null);
 const fetchUserDetail = async () => {
   try {
     const response = await api.get('/user');
-    console.log('fetchUserDetail', response.data);
     store.updateUserDetail(response.data);
   }
   catch (err) {
