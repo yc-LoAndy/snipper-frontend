@@ -135,7 +135,8 @@ const cancelEdit = () => {
 };
 
 // confim editing
-const saveEdit = async () => {
+const saveEdit = async (event: KeyboardEvent | undefined) => {
+  if (event) event.preventDefault();
   if (!store.currentFilePath || store.currentFilePath.endsWith('/')) {
     errorDialogRef.value?.showError('Invalid path', 'Please provide a correct path.');
     return;
