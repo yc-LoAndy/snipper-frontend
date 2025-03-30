@@ -21,7 +21,7 @@ const refreshAccessToken = async (failedRequest: any) => {
         );
         const { accessToken } = response.data;
 
-        localStorage.setItem('accessToken', accessToken);
+        sessionStorage.setItem('accessToken', accessToken);
 		
 		userStore.updateAuthStatus(true);
         failedRequest.response.config.headers['Authorization'] = `Bearer ${accessToken}`;
@@ -29,7 +29,7 @@ const refreshAccessToken = async (failedRequest: any) => {
         return Promise.resolve(failedRequest);
     } catch (error: any) {
         if (error.response && error.response.status === 401) {
-            localStorage.removeItem('accessToken');
+            sessionStorage.removeItem('accessToken');
 			userStore.$reset();
 			editorStore.$reset();
             error.response.data.message = 'User logged-out';
@@ -43,7 +43,7 @@ const refreshAccessToken = async (failedRequest: any) => {
 api.interceptors.request.use(
     (config) => {
 		
-        const token = localStorage.getItem('accessToken');
+        const token = sessionStorage.getItem('accessToken');
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
@@ -57,7 +57,7 @@ api.interceptors.request.use(
 api.interceptors.response.use(
 	(response) => {
 		const store = useUserStateStore();
-		if (localStorage.getItem('accessToken'))
+		if (sessionStorage.getItem('accessToken'))
 			store.updateAuthStatus(true);
 
 		store.updateLoadingStatus(false);

@@ -39,7 +39,7 @@ const editorStore = useEditorStore();
 const router = useRouter();
 const toLogout = async () => {
   await api.post('/logout');
-  localStorage.removeItem('accessToken');
+  sessionStorage.removeItem('accessToken');
 
   userStore.$reset();
   editorStore.$reset();

@@ -32,7 +32,7 @@ router.beforeEach(async (_, __, next) => {
 });
 router.afterEach(() => {
 	const store = userStateStore();
-	store.updateAuthStatus(!!localStorage.getItem('accessToken'));
+	store.updateAuthStatus(!!sessionStorage.getItem('accessToken'));
 	store.updateLoadingStatus(false);
 });
 

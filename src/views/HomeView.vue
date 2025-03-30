@@ -99,7 +99,7 @@ const handleGoogleAccessTokenLogin = async () => {
   });
   const googleAccessToken = response.access_token;
   const backendResponse = await api.post('/google/callback', { accessToken: googleAccessToken });
-  localStorage.setItem('accessToken', backendResponse.data.accessToken);
+  sessionStorage.setItem('accessToken', backendResponse.data.accessToken);
   userStore.$reset();
   editorStore.$reset();
   router.push('/main');
