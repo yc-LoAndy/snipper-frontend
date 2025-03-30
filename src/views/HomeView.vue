@@ -82,6 +82,11 @@ import env from '../utils/env';
 import 'vue3-carousel/carousel.css';
 import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel';
 import BackView from './BackView.vue';
+import useUserStateStore from '../stores/userStateStore';
+import useEditorStore from '../stores/editorStore';
+
+const userStore = useUserStateStore();
+const editorStore = useEditorStore();
 
 const sampleCodes = ref<{ name: string, code: string }[]>([]);
 const homeEditorTitle = ref('');
@@ -95,6 +100,8 @@ const handleGoogleAccessTokenLogin = async () => {
   const googleAccessToken = response.access_token;
   const backendResponse = await api.post('/google/callback', { accessToken: googleAccessToken });
   localStorage.setItem('accessToken', backendResponse.data.accessToken);
+  userStore.$reset();
+  editorStore.$reset();
   router.push('/main');
 };
 

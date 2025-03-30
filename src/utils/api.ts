@@ -3,6 +3,7 @@ import axios from 'axios';
 import { ref } from 'vue';
 import createAuthRefreshInterceptor, { type AxiosAuthRefreshRequestConfig } from 'axios-auth-refresh';
 import useUserStateStore from '../stores/userStateStore';
+import useEditorStore from '../stores/editorStore';
 import env from './env';
 
 const api = axios.create({
@@ -10,7 +11,8 @@ const api = axios.create({
 });
 export const apiError = ref<string | null>(null);
 const refreshAccessToken = async (failedRequest: any) => {
-	const store = useUserStateStore();
+	const userStore = useUserStateStore();
+	const editorStore = useEditorStore();
     try {
         const response = await api.post(
             '/token', {}, {
@@ -21,14 +23,15 @@ const refreshAccessToken = async (failedRequest: any) => {
 
         localStorage.setItem('accessToken', accessToken);
 		
-		store.updateAuthStatus(true);
+		userStore.updateAuthStatus(true);
         failedRequest.response.config.headers['Authorization'] = `Bearer ${accessToken}`;
-		store.updateLoadingStatus(false);
+		userStore.updateLoadingStatus(false);
         return Promise.resolve(failedRequest);
     } catch (error: any) {
         if (error.response && error.response.status === 401) {
             localStorage.removeItem('accessToken');
-			store.updateAuthStatus(false);
+			userStore.$reset();
+			editorStore.$reset();
             error.response.data.message = 'User logged-out';
         }
         return Promise.reject(error);

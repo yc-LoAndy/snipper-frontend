@@ -10,12 +10,12 @@
       </div>
       <div class="nav-links" style="margin-right: 35px;">
         <ButtonTag rounded @click="router.push('/');" label="Home" severity="secondary" variant="text" />
-        <span v-if="store.isAuthenticated" class="separator"></span>
-        <div v-if="store.isAuthenticated">
+        <span v-if="userStore.isAuthenticated" class="separator"></span>
+        <div v-if="userStore.isAuthenticated">
           <SplitButton rounded :model="userButtons" class="user-btn" severity="secondary" variant="text"
-            @click="console.log(store.userDetails)">
-            <img :src="store.userDetails?.userAvatarUrl ?? ''" width="30px" style="border-radius: 20px;">
-            {{ store.userDetails?.userName ?? '' }}
+            @click="console.log(userStore.userDetails)">
+            <img :src="userStore.userDetails?.userAvatarUrl ?? ''" width="30px" style="border-radius: 20px;">
+            {{ userStore.userDetails?.userName ?? '' }}
           </SplitButton>
         </div>
       </div>
@@ -28,17 +28,22 @@ import { useRouter } from 'vue-router';
 import { useToast } from 'primevue/usetoast';
 import api from '../utils/api';
 import useUserStateStore from '../stores/userStateStore';
+import useEditorStore from '../stores/editorStore';
 import SplitButton from 'primevue/splitbutton';
 import type { MenuItem } from 'primevue/menuitem';
 
 
 const toast = useToast();
-const store = useUserStateStore();
+const userStore = useUserStateStore();
+const editorStore = useEditorStore();
 const router = useRouter();
 const toLogout = async () => {
   await api.post('/logout');
   localStorage.removeItem('accessToken');
-  store.updateAuthStatus(false);
+
+  userStore.$reset();
+  editorStore.$reset();
+
   router.push('/');
   toast.add({
     severity: 'secondary',
