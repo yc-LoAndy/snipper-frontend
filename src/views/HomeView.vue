@@ -191,7 +191,7 @@ onMounted(async () => {
   font-size: 1.2rem;
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 500px) {
   .logo {
     font-size: 2.5rem;
   }
@@ -364,25 +364,6 @@ onMounted(async () => {
 }
 
 @media screen and (max-width: 500px) {
-  .support-lang-div {
-    font-size: 30px;
-  }
-
-  .langs-logo {
-    width: 20px;
-    height: 20px;
-  }
-
-  .supported-langs {
-    font-size: 20px;
-    flex-direction: column;
-  }
-
-  .support-lang {
-    margin: 20px;
-    flex-direction: column;
-  }
-
   .carousal-div {
     --vc-nav-height: 0;
     --vc-nav-width: 0;
@@ -402,6 +383,27 @@ onMounted(async () => {
   .p-button {
     font-size: 12px;
     --p-icon-size: 12px;
+  }
+}
+
+@media screen and (max-width: 1000px) {
+  .support-lang-div {
+    font-size: 30px;
+  }
+
+  .langs-logo {
+    width: 20px;
+    height: 20px;
+  }
+
+  .supported-langs {
+    font-size: 20px;
+    flex-direction: column;
+  }
+
+  .support-lang {
+    margin: 20px;
+    flex-direction: column;
   }
 }
 </style>

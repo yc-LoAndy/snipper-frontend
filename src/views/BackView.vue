@@ -73,9 +73,9 @@ const getTextStyle = (text: backgroundTextType) => ({
   transform: `translateY(${deltaYs.value[text.rowId]}px)`
 });
 
-const mediaQuery = window.matchMedia('(max-width: 500px)');
+const mediaQuery = window.matchMedia('(max-width: 700px)');
 function handleMediaChange(e: MediaQueryListEvent | MediaQueryList) {
-  const maxTextLength = e.matches ? 12 : 17;
+  const maxTextLength = e.matches ? 12 : 16;
   generateStaggeredGrid(maxTextLength);
 }
 
@@ -117,10 +117,9 @@ onBeforeUnmount(() => {
   color: antiquewhite;
 }
 
-@media (max-width: 500px) {
+@media (max-width: 700px) {
   .background-text {
-    font-size: 10px !important;
-    /* left: calc(var(--cell-pos) - 3vw) !important; */
+    font-size: 11px !important;
   }
 
 }
