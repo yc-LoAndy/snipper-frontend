@@ -1,12 +1,10 @@
 <template>
-  <div id="app">
-    <ToastTag />
-    <ErrorAlert />
-    <LoadingSpinner />
-    <AppHeader style="background-color: #0f0e0e" />
-    <router-view />
-    <AppFooter />
-  </div>
+  <ToastTag />
+  <ErrorAlert />
+  <LoadingSpinner />
+  <AppHeader style="background-color: #0f0e0e" />
+  <router-view />
+  <AppFooter />
 </template>
 
 <script setup lang="ts">

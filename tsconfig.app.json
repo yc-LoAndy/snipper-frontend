@@ -18,5 +18,8 @@
     "src/**/*.tsx",
     "src/**/*.vue",
     "server.ts"
+  ],
+  "exclude": [
+    "node_modules"
   ]
 }

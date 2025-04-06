@@ -1,22 +1,24 @@
 <template>
   <header>
     <nav>
-      <div class="d-flex" style="margin-left: 75px;">
-        <div class="d-flex align-items-center pb-1">
-          <img src="/logo.png" width="30" height="30">
+      <div class="header-div">
+        <div class="d-flex logo-div">
+          <div class="d-flex align-items-center pb-1">
+            <img src="/logo.png" class="logo-img">
+          </div>
+          <div class="mx-1"></div>
+          <div class="logo"><a @click="router.push('/')">Snipper</a></div>
         </div>
-        <div class="mx-1"></div>
-        <div class="logo"><a @click="router.push('/')">Snipper</a></div>
-      </div>
-      <div class="nav-links" style="margin-right: 35px;">
-        <ButtonTag rounded @click="router.push('/');" label="Home" severity="secondary" variant="text" />
-        <span v-if="userStore.isAuthenticated" class="separator"></span>
-        <div v-if="userStore.isAuthenticated">
-          <SplitButton rounded :model="userButtons" class="user-btn" severity="secondary" variant="text"
-            @click="console.log(userStore.userDetails)">
-            <img :src="userStore.userDetails?.userAvatarUrl ?? ''" width="30px" style="border-radius: 20px;">
-            {{ userStore.userDetails?.userName ?? '' }}
-          </SplitButton>
+        <div class="nav-links">
+          <ButtonTag rounded @click="router.push('/');" label="Home" severity="secondary" variant="text" />
+          <span v-if="userStore.isAuthenticated" class="separator"></span>
+          <div v-if="userStore.isAuthenticated" class="buttons-div">
+            <SplitButton rounded :model="userButtons" class="user-btn" severity="secondary" variant="text"
+              @click="console.log(userStore.userDetails)">
+              <img :src="userStore.userDetails?.userAvatarUrl ?? ''" class="user-avatar">
+              <div class="username-div">{{ userStore.userDetails?.userName ?? '' }}</div>
+            </SplitButton>
+          </div>
         </div>
       </div>
     </nav>
@@ -68,24 +70,23 @@ const userButtons: MenuItem[] = [
 
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+.header-div {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
 header {
   background-color: 0f0f0f;
   padding: 1rem;
+  height: fit-content;
 }
 
 a {
   cursor: pointer;
   text-decoration: none;
   color: white;
-}
-
-nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  max-width: 75%;
-  margin: 0 auto;
 }
 
 .separator {
@@ -101,6 +102,11 @@ nav {
   --p-button-secondary-color: #64748b;
 }
 
+.user-avatar {
+  width: 30px;
+  border-radius: 20px;
+}
+
 .logo {
   font-family: "Bowlby One", sans-serif;
   font-weight: 400;
@@ -112,5 +118,59 @@ nav {
   display: flex;
   align-items: center;
   gap: 1.5rem;
+}
+
+.logo-img {
+  width: 30px;
+  height: 30px;
+}
+
+@media screen and (max-width: 500px) {
+  .logo {
+    font-size: 1.2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .logo-img {
+    width: 20px;
+    height: 20px;
+  }
+
+  .logo-div {
+    margin-left: 0;
+  }
+
+  .p_splitbutton {
+    width: 10px;
+  }
+
+  .username-div {
+    display: none;
+  }
+
+  .p-button {
+    font-size: 0.8rem;
+    --p-button-padding-x: 6.5px;
+    --p-button-padding-y: 6.5px;
+  }
+
+  .user-btn {
+    --p-button-padding-x: 6px;
+    --p-button-padding-y: 6px;
+  }
+
+  .separator {
+    height: 15px;
+  }
+
+  .user-avatar {
+    width: 25px;
+  }
+
+  .nav-links {
+    gap: 0.5rem;
+  }
 }
 </style>

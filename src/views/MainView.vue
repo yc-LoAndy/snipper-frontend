@@ -6,13 +6,13 @@
       </div>
 
       <div v-else class="top-container">
-        <div class="container">
+        <div class="container" style="height: fit-content;">
           <div style="width: 100%;">
-            <Splitter>
+            <Splitter :layout="splitterLayout">
               <SplitterPanel :size="5" :minSize="20">
                 <TreeView style="width: 100%; height: 100%;" />
               </SplitterPanel>
-              <SplitterPanel :size="60" :minSize="40" style="width: 100%; height: 100%; margin-left: 7px;">
+              <SplitterPanel :size="60" :minSize="40" style="width: 100%; height: 100%;" class="editor-splitter">
                 <EditorView />
               </SplitterPanel>
             </Splitter>
@@ -33,9 +33,8 @@ import { ref, onMounted, onUnmounted } from 'vue';
 import { eventBus } from '../utils/eventBus';
 import useUserStateStore from '../stores/userStateStore';
 
-// shared objects
 const store = useUserStateStore();
-// others
+const splitterLayout = ref<'vertical' | 'horizontal'>('vertical');
 const error = ref<string | null>(null);
 
 const fetchUserDetail = async () => {
@@ -53,8 +52,15 @@ const refreshData = async () => {
   await fetchUserDetail();
 };
 
+const mediaQuery = window.matchMedia('(max-width: 500px)');
+function handleMediaChange(e: MediaQueryListEvent | MediaQueryList) {
+  splitterLayout.value = e.matches ? 'vertical' : 'horizontal';
+}
+
 onMounted(async () => {
   eventBus.on('refreshData', refreshData);
+  handleMediaChange(mediaQuery);
+  mediaQuery.addEventListener('change', handleMediaChange);
   await fetchUserDetail();
 });
 
@@ -75,5 +81,16 @@ onUnmounted(() => {
   --p-splitter-gutter-background: #353434;
   --p-splitter-handle-background: #767575;
   --p-splitter-border-color: #0f0e0e;
+}
+
+.editor-splitter {
+  margin-left: 7px;
+}
+
+@media screen and (max-width: 500px) {
+  .editor-splitter {
+    margin-left: 0px;
+    margin-top: 7px;
+  }
 }
 </style>

@@ -4,7 +4,7 @@
   <SettingDialog ref="settingDialogRef" @update:textSize="onUpdateTextSize" />
   <div>
     <div class="file-path-container">
-      <div class="">
+      <div>
         <InputText :readonly="!isEditing" type="text" v-model="store.currentFilePath" placeholder="Current file path"
           :style="pathInputStyle" ref="filePathInputRef" @keydown.enter="saveEdit" />
       </div>
@@ -27,8 +27,8 @@
     </div>
     <div>
       <codemirror v-model="store.currentEditorContent" :disabled="!isCreatingNewFile && !isUpdatingFile"
-        :extensions="cmExtensions" @ready="handleReady" style="height: 750px;"
-        :style="{ 'font-size': `${13 + textSize * 0.15}px` }" />
+        :extensions="cmExtensions" @ready="handleReady"
+        :style="{ 'font-size': `${13 + textSize * 0.15}px`, 'height': codeMirrorHeight }" class="code-area" />
     </div>
   </div>
 </template>
@@ -62,6 +62,7 @@ const filePathInputRef = ref();
 const errorDialogRef = ref<InstanceType<typeof ErrorDialog> | null>(null);
 const confirmDialogRef = ref<InstanceType<typeof ConfirmDialog> | null>(null);
 const settingDialogRef = ref<InstanceType<typeof SettingDialog> | null>(null);
+const codeMirrorHeight = ref('750px');
 
 const onUpdateTextSize = (v: number) => { textSize.value = v; };
 
@@ -213,11 +214,18 @@ const onDelete = async () => {
   resetView();
 };
 
-
 const whenTreeGotFocus = () => {
   isUpdatingFile.value = isCreatingNewFile.value = isRenamingFolder.value = false;
 };
+
+const mediaQuery = window.matchMedia('(max-width: 500px)');
+function handleMediaChange(e: MediaQueryListEvent | MediaQueryList) {
+  codeMirrorHeight.value = e.matches ? '500px' : '750px';
+}
+
 onMounted(() => {
+  handleMediaChange(mediaQuery);
+  mediaQuery.addEventListener('change', handleMediaChange);
   eventBus.on('treeGotFocus', whenTreeGotFocus);
 });
 onUnmounted(() => {
@@ -225,11 +233,21 @@ onUnmounted(() => {
 });
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .file-path-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+@media screen and (max-width: 500px) {
+  .file-path-container {
+    flex-direction: column;
+  }
+
+  .p-inputtext {
+    text-align: center;
+  }
 }
 
 .toolbar-btns {

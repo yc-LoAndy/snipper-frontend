@@ -1,76 +1,76 @@
-<template>
-  <div class="mt-5" style="min-height: 2000px;">
-    <BackView
-      style="position: fixed; top: 0; left: 0%; width: 100%; height: 100%; z-index: -1; background-color: #0f0f0f;" />
-    <div style="position: relative; z-index: 1;">
-      <div class="d-flex justify-content-center">
-        <div class="logo">
-          <span>{{ logo }}</span><span class="cursor">&nbsp;</span>
+  <template>
+    <div class="mt-5" style="min-height: 2000px;">
+      <BackView
+        style="position: fixed; top: 0; left: 0%; width: 100%; height: 100%; z-index: -1; background-color: #0f0f0f;" />
+      <div style="position: relative; z-index: 1;">
+        <div class="d-flex justify-content-center">
+          <div class="logo">
+            <span>{{ logo }}</span><span class="cursor">&nbsp;</span>
+          </div>
+        </div>
+        <div class="mb-5 logo-description">
+          <p>- Code Snippet Manager -</p>
+          <div class="d-flex justify-content-center m-5">
+            <a class="btn btn-1">
+              <svg @click="handleGoogleAccessTokenLogin">
+                <rect x="0" y="0" fill="none" width="100%" height="100%" />
+              </svg>
+              Get Started
+            </a>
+          </div>
         </div>
       </div>
-      <div class="mb-5 logo-description">
-        <p>- Code Snippet Manager -</p>
-        <div class="d-flex justify-content-center m-5">
-          <a class="btn btn-1">
-            <svg @click="handleGoogleAccessTokenLogin">
-              <rect x="0" y="0" fill="none" width="100%" height="100%" />
-            </svg>
-            Get Started
-          </a>
-        </div>
-      </div>
-    </div>
-    <div class="d-flex justify-content-center" style="background-color: #211f1f; height: 1250px;">
-      <div class="w-75 m-5 align-self-start">
-        <div style="font-weight: bolder; font-size: 60px; margin-bottom: 4rem;" ref="slideDivRef" class="slide-in">
-          Store your code snippets,<br>
-          Reuse them whenever you want.
-        </div>
-        <div class="d-flex flex-column align-items-center">
-          <div class="d-flex justify-content-between w-100">
-            <InputText readonly="true" type="text" :value="homeEditorTitle" placeholder="Current file path"
-              class="mb-3 code-title" style="margin: auto;" />
-            <div>
-              <ButtonTag v-if="playInerval !== 0" @click="playInerval = 0" rounded icon="pi pi-pause" variant="text"
-                aria-label="Filter" severity="secondary" label="Pause" />
-              <ButtonTag v-else @click="playInerval = 7000" rounded icon="pi pi-play" variant="text" aria-label="Filter"
-                severity="secondary" label="Continue" />
+      <div class="d-flex justify-content-center middle-area">
+        <div class="m-5 align-self-start middle-content">
+          <div ref="slideDivRef" class="slide-in">
+            Store your code snippets,<br>
+            Reuse them whenever you want.
+          </div>
+          <div class="d-flex flex-column align-items-center">
+            <div class="d-flex justify-content-center w-100 carousel-heads">
+              <div class="d-flex align-items-center">
+                <InputText readonly="true" type="text" :value="homeEditorTitle" placeholder="Current file path"
+                  class="code-title" style="margin: auto;" />
+              </div>
+              <div class="d-flex align-items-center slide-button">
+                <ButtonTag v-if="playInerval !== 0" @click="playInerval = 0" rounded icon="pi pi-pause" variant="text"
+                  aria-label="Filter" severity="secondary" label="Pause" />
+                <ButtonTag v-else @click="playInerval = 7000" rounded icon="pi pi-play" variant="text"
+                  aria-label="Filter" severity="secondary" label="Continue" />
+              </div>
+            </div>
+            <div class="w-100 carousal-div">
+              <Carousel :autoplay="playInerval" v-model="sampleCodeIdx" :wrap-around="true"
+                :pause-autoplay-on-hover="true">
+                <Slide v-for="sampleCode in sampleCodes" :key="sampleCode.name">
+                  <div class="carousel__item w-75 ">
+                    <codemirror :modelValue="sampleCode.code" :extensions="getExtension(sampleCode.name)" />
+                  </div>
+                </Slide>
+                <template #addons>
+                  <Navigation style="color: white;" />
+                  <Pagination style="--vc-pgn-active-color: white; --vc-pgn-background-color: gray" />
+                </template>
+              </Carousel>
             </div>
           </div>
-          <div class="w-100">
-            <Carousel :autoplay="playInerval" v-model="sampleCodeIdx" :wrap-around="true"
-              :pause-autoplay-on-hover="true">
-              <Slide v-for="sampleCode in sampleCodes" :key="sampleCode.name">
-                <div class="carousel__item w-75">
-                  <codemirror :modelValue="sampleCode.code" :extensions="getExtension(sampleCode.name)"
-                    style="width: 100%; height:auto;" />
-                </div>
-              </Slide>
-              <template #addons>
-                <Navigation style="--vc-nav-background: white; --vc-nav-border-radius:20px" />
-                <Pagination style="--vc-pgn-active-color: white; --vc-pgn-background-color: gray" />
-              </template>
-            </Carousel>
+        </div>
+      </div>
+      <div>
+        <div class="d-flex flex-column align-items-center">
+          <div class="m-5 support-lang-div">Supported Language Syntax Highlight</div>
+          <div class="d-flex justify-content-around align-items-center supported-langs">
+            <div class="d-flex align-items-center support-lang" v-for="lang in shownLanguages" :key="lang">
+              <img :src="`languageLogos/${lang.toLowerCase()}.png`" class="langs-logo">
+              <div class="p-3">{{ lang }}</div>
+            </div>
+            <div class="p-3" style="font-size: 25px; font-weight: bolder;">... and more</div>
           </div>
         </div>
       </div>
-    </div>
-    <div>
-      <div class="d-flex flex-column align-items-center">
-        <div class="m-5" style="font-weight: bolder; font-size: 50px;">Supported Language Syntax Highlight</div>
-        <div class="d-flex justify-content-around align-items-center">
-          <div class="d-flex m-5 align-items-center" v-for="lang in shownLanguages" :key="lang">
-            <img :src="`languageLogos/${lang.toLowerCase()}.png`" :width="lang === 'Markdown' ? '75px' : '50px'"
-              height="50px">
-            <div class="p-3" style="font-size: 25px;">{{ lang }}</div>
-          </div>
-          <div class="p-3" style="font-size: 25px; font-weight: bolder;">... and more</div>
-        </div>
-      </div>
-    </div>
 
-  </div>
-</template>
+    </div>
+  </template>
 
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue';
@@ -79,8 +79,8 @@ import { useRouter } from 'vue-router';
 import { googleTokenLogin } from 'vue3-google-login';
 import api from '../utils/api';
 import env from '../utils/env';
-import 'vue3-carousel/carousel.css';
 import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel';
+import 'vue3-carousel/carousel.css';
 import BackView from './BackView.vue';
 import useUserStateStore from '../stores/userStateStore';
 import useEditorStore from '../stores/editorStore';
@@ -122,7 +122,7 @@ watch(
 );
 
 const shownLanguages = [
-  'Javascript', 'Cpp', 'Python', 'SQL', 'Markdown'
+  'Javascript', 'Cpp', 'Python', 'SQL'
 ];
 
 const slideDivRef = ref(null);
@@ -191,6 +191,22 @@ onMounted(async () => {
   font-size: 1.2rem;
 }
 
+@media only screen and (max-width: 600px) {
+  .logo {
+    font-size: 2.5rem;
+  }
+
+  .cursor {
+    width: 4px;
+    height: 32px;
+    margin-bottom: 15px;
+  }
+
+  .logo-description {
+    font-size: 0.8rem;
+  }
+}
+
 .code-title {
   color: white;
   font-size: 20px;
@@ -200,24 +216,6 @@ onMounted(async () => {
   border-color: grey;
   border-width: 2px;
   --p-inputtext-focus-border-color: rgb(24, 78, 93);
-}
-
-.sample-code-enter-active {
-  transform: translateX(100px);
-}
-
-.sample-code-leave-active {
-  transform: translateX(-100px);
-}
-
-.sample-code-enter-from,
-.sample-code-leave-to {
-  opacity: 0;
-}
-
-.sample-code-enter-to,
-.sample-code-leave-from {
-  opacity: 1;
 }
 
 .btn {
@@ -259,6 +257,12 @@ onMounted(async () => {
   animation: rainbow-shadow 3s infinite linear alternate;
 }
 
+@media screen and (max-width: 500px) {
+  .btn {
+    font-size: 18px;
+  }
+}
+
 
 @keyframes rainbow-shadow {
   0% {
@@ -290,15 +294,114 @@ onMounted(async () => {
   }
 }
 
+.middle-area {
+  background-color: #211f1f;
+  height: fit-content;
+}
+
+.middle-content {
+  width: 75%;
+}
+
+@media screen and (max-width: 500px) {
+  .code-title {
+    font-size: 15px;
+  }
+
+  .middle-content {
+    width: 100%;
+  }
+}
+
 .slide-in {
   opacity: 0;
   transform: translateX(-100px);
   transition: all 0.6s ease-out;
   padding: 20px;
+  font-weight: bolder;
+  font-size: 60px;
+  margin-bottom: 4rem;
 }
 
 .slide-in.visible {
   opacity: 1;
   transform: translateX(0);
+}
+
+@media screen and (max-width: 500px) {
+  .slide-in {
+    font-size: 32px;
+  }
+
+  .carousel__item {
+    font-size: 10px;
+  }
+}
+
+.carousel-heads {
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.support-lang-div {
+  font-weight: bolder;
+  font-size: 50px;
+}
+
+.langs-logo {
+  width: 50px;
+  height: 50px;
+}
+
+.supported-langs {
+  font-size: 25px;
+  font-weight: bold;
+  flex-direction: row;
+}
+
+.support-lang {
+  margin: 30px;
+}
+
+@media screen and (max-width: 500px) {
+  .support-lang-div {
+    font-size: 30px;
+  }
+
+  .langs-logo {
+    width: 20px;
+    height: 20px;
+  }
+
+  .supported-langs {
+    font-size: 20px;
+    flex-direction: column;
+  }
+
+  .support-lang {
+    margin: 20px;
+    flex-direction: column;
+  }
+
+  .carousal-div {
+    --vc-nav-height: 0;
+    --vc-nav-width: 0;
+  }
+
+  .carousel-heads {
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+  }
+
+  .slide-button {
+    display: flex;
+    align-items: center;
+  }
+
+  .p-button {
+    font-size: 12px;
+    --p-icon-size: 12px;
+  }
 }
 </style>

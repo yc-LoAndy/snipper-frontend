@@ -18,7 +18,7 @@ type backgroundTextType = {
   rowId: number
 };
 
-const rows = 14;
+const rows = 18;
 const cols = 6;
 const horizontalOffset = 4;
 const scatteredTexts = ref<backgroundTextType[]>([]);
@@ -37,16 +37,15 @@ const moveDown = () => {
     }
   }
   animationFrameId = requestAnimationFrame(moveDown);
-  // console.log(deltaYs.value);
 };
 
-const generateStaggeredGrid = () => {
+const generateStaggeredGrid = (maxTextLength: number) => {
   const rowHeight = document.documentElement.scrollHeight / rows;
   const colWidth = 100 / cols;
   const getFakeFileName = () => {
     while (true) {
       const f = faker.system.fileName();
-      if (f.length <= 17)
+      if (f.length <= maxTextLength)
         return f;
     }
   };
@@ -74,8 +73,15 @@ const getTextStyle = (text: backgroundTextType) => ({
   transform: `translateY(${deltaYs.value[text.rowId]}px)`
 });
 
+const mediaQuery = window.matchMedia('(max-width: 500px)');
+function handleMediaChange(e: MediaQueryListEvent | MediaQueryList) {
+  const maxTextLength = e.matches ? 12 : 17;
+  generateStaggeredGrid(maxTextLength);
+}
+
 onMounted(() => {
-  generateStaggeredGrid();
+  handleMediaChange(mediaQuery);
+  mediaQuery.addEventListener('change', handleMediaChange);
   moveDown();
 });
 
@@ -107,14 +113,15 @@ onBeforeUnmount(() => {
   will-change: transform;
 }
 
-/* .background-text:hover {
+.background-text:hover {
   color: antiquewhite;
-} */
+}
 
-@media (max-width: 768px) {
+@media (max-width: 500px) {
   .background-text {
-    font-size: 16px !important;
-    left: calc(var(--cell-pos) - 3vw) !important;
+    font-size: 10px !important;
+    /* left: calc(var(--cell-pos) - 3vw) !important; */
   }
+
 }
 </style>
